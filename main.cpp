@@ -7,6 +7,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+using namespace std;
+
 // ----------------------------------------------
 // 1. Token Types
 // ----------------------------------------------
@@ -124,7 +126,8 @@ public:
                       << "Type: " << entry.second.type << ", "
                       << "Scope: " << entry.second.scope << ", "
                       << "First Appearance: Line " << entry.second.firstAppearance << ", "
-                      << "Usage Count: " << entry.second.usageCount;
+                      << "Usage Count: " << entry.second.usageCount
+                      << "\n";
             if (!entry.second.value.empty()) {
                 std::cout << ", Value: " << entry.second.value;
             }
@@ -504,6 +507,56 @@ private:
             return { knownType, knownType == "unknown" ? "" : knownValue };
         }
 
+        // if it's a tuple
+        if(tk.lexeme == "("){
+            string value = "(";
+            i++;
+            while ( i < tokens.size () && tokens[i].lexeme != ")"){
+                //auto [type, value] = parseOperand(i); // if we want to know the type of the values stored too
+                value = value + tokens[i].lexeme;
+                i++;
+            }
+            if(i < tokens.size() && tokens[i].lexeme == ")"){
+                i++;
+            }
+            value = value + ")";
+            return {"tuple", value};
+        }
+
+        // if it's a list
+        if(tk.lexeme == "["){
+            string value = "[";
+            i++;
+            while ( i < tokens.size () && tokens[i].lexeme != "]"){
+                value = value + tokens[i].lexeme;
+                i++;
+            }
+            if(i < tokens.size() && tokens[i].lexeme == "]"){
+                i++;
+            }
+            value = value + "]";
+            return {"list", value};
+        }
+
+        // if it's a dictionary or set
+        if(tk.lexeme == "{"){
+            string value = "{";
+            i++;
+            bool isSet = true;
+            while ( i < tokens.size () && tokens[i].lexeme != "}"){
+                if(tokens[i].lexeme == ":"){
+                    isSet = false;
+                }
+                value = value + tokens[i].lexeme;
+                i++;
+            }
+            if(i < tokens.size() && tokens[i].lexeme == "}"){
+                i++;
+            }
+            value = value + "}";
+            return {isSet ? "set" : "dictionary", value};
+        }
+
         // Otherwise unknown
         i++;
         return {"unknown", ""};
@@ -578,7 +631,7 @@ std::string readFile(const std::string& filename) {
 int main() {
     try {
         // 1. Read Python-like source code from an external file
-        std::string sourceCode = readFile("/Users/mohamdtobgi/CLionProjects/compilers/script.py");
+        std::string sourceCode = readFile("script.py");
 
         // 2. Lexical analysis: produce tokens
         Lexer lexer;

@@ -6,6 +6,8 @@
 #include <cctype>
 #include <unordered_set>
 #include <unordered_map>
+#include <regex>
+
 
 using namespace std;
 
@@ -28,10 +30,10 @@ enum class TokenType {
 // ----------------------------------------------
 struct Token {
     TokenType type;
-    std::string lexeme;
+    string lexeme;
     int lineNumber;
 
-    Token(TokenType t, const std::string& l, int line)
+    Token(TokenType t, const string& l, int line)
         : type(t), lexeme(l), lineNumber(line) {}
 };
 
@@ -41,21 +43,21 @@ struct Token {
 class SymbolTable {
 public:
     struct SymbolInfo {
-        std::string type = "unknown";  // e.g., "function", "class", "int", etc.
-        std::string scope = "unknown"; // e.g., "global" or "local"
+        string type = "unknown";  // e.g., "function", "class", "int", etc.
+        string scope = "unknown"; // e.g., "global" or "local"
         int firstAppearance = -1;      // line of first appearance
         int usageCount = 0;            // how many times it is referenced
 
         // A new field to store a literal value if we know it (optional).
         // For example, if x = 42, then `value = "42"`. If x = y, no literal is stored.
-        std::string value;
+        string value;
     };
 
-    std::unordered_map<std::string, SymbolInfo> table;
+    unordered_map<string, SymbolInfo> table;
 
-    void addSymbol(const std::string& name, const std::string& type,
-                   int lineNumber, const std::string& scope = "global",
-                   const std::string& val = "")
+    void addSymbol(const string& name, const string& type,
+                   int lineNumber, const string& scope = "global",
+                   const string& val = "")
     {
         auto it = table.find(name);
         if (it == table.end()) {
@@ -82,7 +84,7 @@ public:
     }
 
     // Allows updating a symbol's type after creation.
-    void updateType(const std::string& name, const std::string& newType) {
+    void updateType(const string& name, const string& newType) {
         auto it = table.find(name);
         if (it != table.end()) {
             it->second.type = newType;
@@ -90,19 +92,19 @@ public:
     }
 
     // Allows updating a symbol's literal value after creation.
-    void updateValue(const std::string& name, const std::string& newValue) {
+    void updateValue(const string& name, const string& newValue) {
         auto it = table.find(name);
         if (it != table.end()) {
             it->second.value = newValue;
         }
     }
 
-    bool exist(const std::string& name) {
+    bool exist(const string& name) {
         return (table.find(name) != table.end());
     }
 
     // Retrieve the type of a symbol if it exists
-    std::string getType(const std::string& name) {
+    string getType(const string& name) {
         auto it = table.find(name);
         if (it != table.end()) {
             return it->second.type;
@@ -111,7 +113,7 @@ public:
     }
 
     // Retrieve the literal value (if any)
-    std::string getValue(const std::string& name) {
+    string getValue(const string& name) {
         auto it = table.find(name);
         if (it != table.end()) {
             return it->second.value;
@@ -120,18 +122,18 @@ public:
     }
 
     void printSymbols() {
-        std::cout << "Symbol Table:\n";
+        cout << "Symbol Table:\n";
         for (auto &entry : table) {
-            std::cout << "  " << entry.first << " => "
+            cout << "  " << entry.first << " => "
                       << "Type: " << entry.second.type << ", "
                       << "Scope: " << entry.second.scope << ", "
                       << "First Appearance: Line " << entry.second.firstAppearance << ", "
                       << "Usage Count: " << entry.second.usageCount
                       << "\n";
             if (!entry.second.value.empty()) {
-                std::cout << ", Value: " << entry.second.value;
+                cout << ", Value: " << entry.second.value;
             }
-            std::cout << "\n";
+            cout << "\n";
         }
     }
 };
@@ -142,7 +144,7 @@ public:
 class Lexer {
 public:
     // A set of Python-like keywords (not exhaustive)
-    std::unordered_set<std::string> pythonKeywords = {
+    unordered_set<string> pythonKeywords = {
         "False", "None", "True", "and", "as", "assert", "async", "await",
         "break", "class", "continue", "def", "del", "elif", "else",
         "except", "finally", "for", "from", "global", "if", "import",
@@ -151,19 +153,19 @@ public:
     };
 
     // Some common single/multi-character operators
-    std::unordered_set<std::string> operators = {
+    unordered_set<string> operators = {
         "+", "-", "*", "/", "%", "//", "**", "=", "==", "!=", "<", "<=", ">", ">="
     };
 
     // Common delimiters
-    std::unordered_set<char> delimiters = {
+    unordered_set<char> delimiters = {
         '(', ')', ':', ',', '.', '[', ']', '{', '}', ';'
     };
 
     // The tokenize() function produces tokens without modifying the symbol table.
-    std::vector<Token> tokenize(const std::string& source)
+    vector<Token> tokenize(const string& source)
     {
-        std::vector<Token> tokens;
+        vector<Token> tokens;
         int lineNumber = 1;
         size_t i = 0;
 
@@ -194,13 +196,13 @@ public:
             }
 
             // Identify keywords or identifiers
-            if (std::isalpha(static_cast<unsigned char>(c)) || c == '_') {
+            if (isalpha(static_cast<unsigned char>(c)) || c == '_') {
                 size_t start = i;
                 while (i < source.size() &&
-                       (std::isalnum(static_cast<unsigned char>(source[i])) || source[i] == '_')) {
+                       (isalnum(static_cast<unsigned char>(source[i])) || source[i] == '_')) {
                     i++;
                 }
-                std::string word = source.substr(start, i - start);
+                string word = source.substr(start, i - start);
                 if (pythonKeywords.find(word) != pythonKeywords.end()) {
                     tokens.push_back(Token(TokenType::KEYWORD, word, lineNumber));
                 } else {
@@ -213,7 +215,7 @@ public:
             if (isOperatorStart(c)) {
                 // Check 2-char operators first
                 if ((i + 1) < source.size()) {
-                    std::string twoChars = source.substr(i, 2);
+                    string twoChars = source.substr(i, 2);
                     if (operators.find(twoChars) != operators.end()) {
                         tokens.push_back(Token(TokenType::OPERATOR, twoChars, lineNumber));
                         i += 2;
@@ -221,7 +223,7 @@ public:
                     }
                 }
                 // Otherwise single-char operator
-                std::string oneChar(1, c);
+                string oneChar(1, c);
                 if (operators.find(oneChar) != operators.end()) {
                     tokens.push_back(Token(TokenType::OPERATOR, oneChar, lineNumber));
                     i++;
@@ -240,28 +242,28 @@ public:
             }
 
             // Handle numeric literals
-            if (std::isdigit(static_cast<unsigned char>(c))) {
+            if (isdigit(static_cast<unsigned char>(c))) {
                 size_t start = i;
                 bool hasDot = false;
-                while (i < source.size() && (std::isdigit(source[i]) || source[i] == '.')) {
+                while (i < source.size() && (isdigit(source[i]) || source[i] == '.')) {
                     if (source[i] == '.' && hasDot) break;
                     else if (source[i] == '.') hasDot = true;
                     i++;
                 }
-                std::string num = source.substr(start, i - start);
+                string num = source.substr(start, i - start);
                 tokens.push_back(Token(TokenType::NUMBER, num, lineNumber));
                 continue;
             }
 
             // Handle delimiters
             if (delimiters.find(c) != delimiters.end()) {
-                tokens.push_back(Token(TokenType::DELIMITER, std::string(1, c), lineNumber));
+                tokens.push_back(Token(TokenType::DELIMITER, string(1, c), lineNumber));
                 i++;
                 continue;
             }
 
             // Otherwise treat as UNKNOWN
-            tokens.push_back(Token(TokenType::UNKNOWN, std::string(1, c), lineNumber));
+            tokens.push_back(Token(TokenType::UNKNOWN, string(1, c), lineNumber));
             i++;
         }
 
@@ -269,14 +271,19 @@ public:
     }
 
 private:
-    void skipWhitespace(const std::string& source, size_t& idx) {
-        while (idx < source.size() &&
-               (source[idx] == ' ' || source[idx] == '\t' || source[idx] == '\r')) {
-            idx++;
+    void skipWhitespace(const string& source, size_t& idx) {
+        static const regex ws_regex(R"(^[ \t\r]+)");
+        smatch match;
+        
+        if (idx >= source.size()) return;
+        
+        string remaining = source.substr(idx);
+        if (regex_search(remaining, match, ws_regex)) {
+            idx += match.length();
         }
     }
 
-    bool handleTripleQuotedString(const std::string& source, size_t &idx, int &lineNumber) {
+    bool handleTripleQuotedString(const string& source, size_t &idx, int &lineNumber) {
         if (idx + 2 < source.size()) {
             char c = source[idx];
             if ((c == '"' || c == '\'') &&
@@ -303,25 +310,36 @@ private:
     }
 
     bool isOperatorStart(char c) {
-        return (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' ||
-                c == '=' || c == '!' || c == '<' || c == '>');
+        regex operatorRegex("[+\\-*/%=!<>]");
+        return regex_match(string(1, c), operatorRegex);
     }
-
-    std::string readStringLiteral(const std::string& source, size_t &idx, int lineNumber) {
+    
+    string readStringLiteral(const string& source, size_t &idx, int /*lineNumber*/) {
+        if (idx >= source.size()) return "";
+    
         char quote = source[idx];
         size_t start = idx;
-        idx++; // skip the opening quote
-        while (idx < source.size() && source[idx] != quote) {
-            // handle escaped quotes or newlines if you want
-            if (source[idx] == '\n') {
-                // some languages error out, or allow triple-quoted multiline
-            }
-            idx++;
+        
+        // Construct regex pattern without raw string issues
+        string pattern;
+        pattern += quote;                            // Opening quote
+        pattern += "(?:\\\\.|[^";                    // Escaped sequences or non-special chars
+        pattern += quote;                            // Add quote to excluded chars
+        pattern += "\\\\])*+";                       // Close group and add quantifier
+        pattern += quote;                            // Closing quote
+    
+        regex re(pattern);
+        smatch match;
+        string remaining = source.substr(start);
+    
+        if (regex_search(remaining, match, re) && match.position() == 0) {
+            idx = start + match.length();
+            return match.str();
+        } else {
+            // Handle unterminated string
+            idx = source.size();
+            return source.substr(start);
         }
-        if (idx < source.size()) {
-            idx++; // skip the closing quote
-        }
-        return source.substr(start, idx - start);
     }
 };
 
@@ -330,7 +348,7 @@ private:
 // ----------------------------------------------
 class Parser {
 public:
-    Parser(const std::vector<Token>& tokens, SymbolTable& symTable)
+    Parser(const vector<Token>& tokens, SymbolTable& symTable)
         : tokens(tokens), symbolTable(symTable) {}
 
     void parse() {
@@ -366,7 +384,7 @@ public:
                         tokens[i + 1].lexeme == "=")
                     {
                         // We have "identifier = ..."
-                        const std::string& lhsName = tk.lexeme;
+                        const string& lhsName = tk.lexeme;
                         int lineNumber = tk.lineNumber;
                         // Add symbol if not exist
                         if (!symbolTable.exist(lhsName)) {
@@ -407,9 +425,9 @@ public:
 
 private:
 private:
-    const std::vector<Token>& tokens;
+    const vector<Token>& tokens;
     SymbolTable& symbolTable;
-    std::string lastKeyword;
+    string lastKeyword;
 
     // ------------------------------------------------------
     // parseExpression:
@@ -420,7 +438,7 @@ private:
     // We'll return the final type and a single literal value only
     // if the entire expression is a single literal. Otherwise, "".
     // ------------------------------------------------------
-    std::pair<std::string, std::string> parseExpression(size_t &i) {
+    pair<string, string> parseExpression(size_t &i) {
         // Parse the first operand
         auto [accumType, accumValue] = parseOperand(i);
 
@@ -428,7 +446,7 @@ private:
         while (i < tokens.size()) {
             // Check if next token is +, -, *, /
             if (tokens[i].type == TokenType::OPERATOR) {
-                std::string op = tokens[i].lexeme;
+                string op = tokens[i].lexeme;
                 if (op == "+" || op == "-" || op == "*" || op == "/") {
                     // consume the operator
                     i++;
@@ -458,7 +476,7 @@ private:
     // This re-uses the same logic from a simplified version
     // of "inferTypeOfRHS" but for a single operand only.
     // ------------------------------------------------------
-    std::pair<std::string, std::string> parseOperand(size_t &i) {
+    pair<string, string> parseOperand(size_t &i) {
         if (i >= tokens.size()) {
             return {"unknown", ""};
         }
@@ -468,7 +486,7 @@ private:
         // If it's a numeric literal
         if (tk.type == TokenType::NUMBER) {
             // check if there's a '.' => float
-            if (tk.lexeme.find('.') != std::string::npos) {
+            if (tk.lexeme.find('.') != string::npos) {
                 i++;
                 return {"float", tk.lexeme};
             } else {
@@ -495,9 +513,9 @@ private:
 
         // If it's an identifier
         if (tk.type == TokenType::IDENTIFIER) {
-            std::string name = tk.lexeme;
-            std::string knownType = symbolTable.getType(name);
-            std::string knownValue = symbolTable.getValue(name);
+            string name = tk.lexeme;
+            string knownType = symbolTable.getType(name);
+            string knownValue = symbolTable.getValue(name);
             if (!symbolTable.exist(name)) {
                 symbolTable.addSymbol(name, "unknown", tk.lineNumber);
             } else {
@@ -571,7 +589,7 @@ private:
     // - if there's a conflict (e.g., "string" + "int"), => "unknown"
     // Expand this if you want to handle more complex rules
     // ------------------------------------------------------
-    std::string unifyTypes(const std::string& t1, const std::string& t2) {
+    string unifyTypes(const string& t1, const string& t2) {
         if (t1 == "unknown" && t2 == "unknown")
             return "unknown";
         if (t1 == "unknown") return t2;
@@ -615,12 +633,12 @@ private:
 // ----------------------------------------------
 // 6. Utility function to read the entire file
 // ----------------------------------------------
-std::string readFile(const std::string& filename) {
-    std::ifstream fileStream(filename);
+string readFile(const string& filename) {
+    ifstream fileStream(filename);
     if (!fileStream.is_open()) {
-        throw std::runtime_error("Could not open file: " + filename);
+        throw runtime_error("Could not open file: " + filename);
     }
-    std::stringstream buffer;
+    stringstream buffer;
     buffer << fileStream.rdbuf();
     return buffer.str();
 }
@@ -631,29 +649,29 @@ std::string readFile(const std::string& filename) {
 int main() {
     try {
         // 1. Read Python-like source code from an external file
-        std::string sourceCode = readFile("script.py");
+        string sourceCode = readFile("script.py");
 
         // 2. Lexical analysis: produce tokens
         Lexer lexer;
-        std::vector<Token> tokens = lexer.tokenize(sourceCode);
+        vector<Token> tokens = lexer.tokenize(sourceCode);
 
         // 3. Print out tokens (for demonstration)
-        std::cout << "Tokens:\n";
+        cout << "Tokens:\n";
         for (auto &tk : tokens) {
-            std::cout << "  Line " << tk.lineNumber << " | ";
+            cout << "  Line " << tk.lineNumber << " | ";
             switch (tk.type) {
-                case TokenType::KEYWORD:        std::cout << "KEYWORD";        break;
-                case TokenType::IDENTIFIER:     std::cout << "IDENTIFIER";     break;
-                case TokenType::NUMBER:         std::cout << "NUMBER";         break;
-                case TokenType::OPERATOR:       std::cout << "OPERATOR";       break;
-                case TokenType::DELIMITER:      std::cout << "DELIMITER";      break;
-                case TokenType::STRING_LITERAL: std::cout << "STRING_LITERAL"; break;
-                case TokenType::COMMENT:        std::cout << "COMMENT";        break;
-                case TokenType::UNKNOWN:        std::cout << "UNKNOWN";        break;
+                case TokenType::KEYWORD:        cout << "KEYWORD";        break;
+                case TokenType::IDENTIFIER:     cout << "IDENTIFIER";     break;
+                case TokenType::NUMBER:         cout << "NUMBER";         break;
+                case TokenType::OPERATOR:       cout << "OPERATOR";       break;
+                case TokenType::DELIMITER:      cout << "DELIMITER";      break;
+                case TokenType::STRING_LITERAL: cout << "STRING_LITERAL"; break;
+                case TokenType::COMMENT:        cout << "COMMENT";        break;
+                case TokenType::UNKNOWN:        cout << "UNKNOWN";        break;
             }
-            std::cout << " | Lexeme: " << tk.lexeme << "\n";
+            cout << " | Lexeme: " << tk.lexeme << "\n";
         }
-        std::cout << std::endl;
+        cout << endl;
 
         // 4. Parse/semantic pass: build the symbol table with type inference
         SymbolTable symTable;
@@ -663,8 +681,8 @@ int main() {
         // 5. Print final symbol table
         symTable.printSymbols();
     }
-    catch (const std::exception &ex) {
-        std::cerr << "Error: " << ex.what() << std::endl;
+    catch (const exception &ex) {
+        cerr << "Error: " << ex.what() << endl;
         return 1;
     }
     return 0;

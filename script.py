@@ -18,6 +18,7 @@ def myFunction(x, y=10):
     A function docstring
     """
     str1 = "Hello \" World \"  Next line"
+    "hi"
 
     myList = [1, 2, 3]
     for i in myList:

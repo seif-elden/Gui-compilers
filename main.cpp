@@ -213,9 +213,15 @@ public:
                 continue;
             }
 
+            int startlineNumber = lineNumber;
+            string triplestring = handleTripleQuotedString(source, i, lineNumber);
             // Handle triple-quoted strings
-            if (handleTripleQuotedString(source, i, lineNumber))
+            if (triplestring.length())
             {
+                tokens.push_back(Token(
+                    TokenType::STRING_LITERAL,
+                    triplestring,
+                    startlineNumber));
                 continue;
             }
 
@@ -324,8 +330,9 @@ private:
         }
     }
 
-    bool handleTripleQuotedString(const string &source, size_t &idx, int &lineNumber)
+    string handleTripleQuotedString(const string &source, size_t &idx, int &lineNumber)
     {
+        string mystring = "\"\"\" ";
         if (idx + 2 < source.size())
         {
             char c = source[idx];
@@ -337,6 +344,7 @@ private:
                 idx += 3; // skip opening triple quotes
                 while (idx + 2 < source.size())
                 {
+                    mystring += source[idx];
                     if (source[idx] == '\n')
                     {
                         lineNumber++;
@@ -346,14 +354,15 @@ private:
                         source[idx + 2] == quoteChar)
                     {
                         idx += 3; // skip closing triple quotes
+                        mystring += "\"\"";
                         break;
                     }
                     idx++;
                 }
-                return true;
+                return mystring;
             }
         }
-        return false;
+        return "";
     }
 
     bool isOperatorStart(char c)

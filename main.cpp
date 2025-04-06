@@ -8,13 +8,13 @@
 #include <unordered_map>
 #include <regex>
 
-
 using namespace std;
 
 // ----------------------------------------------
 // 1. Token Types
 // ----------------------------------------------
-enum class TokenType {
+enum class TokenType
+{
     KEYWORD,
     IDENTIFIER,
     NUMBER,
@@ -28,25 +28,28 @@ enum class TokenType {
 // ----------------------------------------------
 // 2. Token Structure
 // ----------------------------------------------
-struct Token {
+struct Token
+{
     TokenType type;
     string lexeme;
     int lineNumber;
 
-    Token(TokenType t, const string& l, int line)
+    Token(TokenType t, const string &l, int line)
         : type(t), lexeme(l), lineNumber(line) {}
 };
 
 // ----------------------------------------------
 // 3. Symbol Table
 // ----------------------------------------------
-class SymbolTable {
+class SymbolTable
+{
 public:
-    struct SymbolInfo {
+    struct SymbolInfo
+    {
         string type = "unknown";  // e.g., "function", "class", "int", etc.
         string scope = "unknown"; // e.g., "global" or "local"
-        int firstAppearance = -1;      // line of first appearance
-        int usageCount = 0;            // how many times it is referenced
+        int firstAppearance = -1; // line of first appearance
+        int usageCount = 0;       // how many times it is referenced
 
         // A new field to store a literal value if we know it (optional).
         // For example, if x = 42, then `value = "42"`. If x = y, no literal is stored.
@@ -55,12 +58,13 @@ public:
 
     unordered_map<string, SymbolInfo> table;
 
-    void addSymbol(const string& name, const string& type,
-                   int lineNumber, const string& scope = "global",
-                   const string& val = "")
+    void addSymbol(const string &name, const string &type,
+                   int lineNumber, const string &scope = "global",
+                   const string &val = "")
     {
         auto it = table.find(name);
-        if (it == table.end()) {
+        if (it == table.end())
+        {
             // If this symbol hasn't appeared before, create an entry
             SymbolInfo info;
             info.type = type;
@@ -69,68 +73,84 @@ public:
             info.usageCount = 1;
             info.value = val;
             table[name] = info;
-        } else {
+        }
+        else
+        {
             // If it already exists, increment usage and possibly update the type/value
             it->second.usageCount++;
             // If the type was unknown before, or if we want to override it, do so:
-            if (it->second.type == "unknown" && type != "unknown") {
+            if (it->second.type == "unknown" && type != "unknown")
+            {
                 it->second.type = type;
             }
             // Update the value if we explicitly have a new one
-            if (!val.empty()) {
+            if (!val.empty())
+            {
                 it->second.value = val;
             }
         }
     }
 
     // Allows updating a symbol's type after creation.
-    void updateType(const string& name, const string& newType) {
+    void updateType(const string &name, const string &newType)
+    {
         auto it = table.find(name);
-        if (it != table.end()) {
+        if (it != table.end())
+        {
             it->second.type = newType;
         }
     }
 
     // Allows updating a symbol's literal value after creation.
-    void updateValue(const string& name, const string& newValue) {
+    void updateValue(const string &name, const string &newValue)
+    {
         auto it = table.find(name);
-        if (it != table.end()) {
+        if (it != table.end())
+        {
             it->second.value = newValue;
         }
     }
 
-    bool exist(const string& name) {
+    bool exist(const string &name)
+    {
         return (table.find(name) != table.end());
     }
 
     // Retrieve the type of a symbol if it exists
-    string getType(const string& name) {
+    string getType(const string &name)
+    {
         auto it = table.find(name);
-        if (it != table.end()) {
+        if (it != table.end())
+        {
             return it->second.type;
         }
         return "unknown";
     }
 
     // Retrieve the literal value (if any)
-    string getValue(const string& name) {
+    string getValue(const string &name)
+    {
         auto it = table.find(name);
-        if (it != table.end()) {
+        if (it != table.end())
+        {
             return it->second.value;
         }
         return "";
     }
 
-    void printSymbols() {
+    void printSymbols()
+    {
         cout << "Symbol Table:\n";
-        for (auto &entry : table) {
+        for (auto &entry : table)
+        {
             cout << "  " << entry.first << " => "
-                      << "Type: " << entry.second.type << ", "
-                      << "Scope: " << entry.second.scope << ", "
-                      << "First Appearance: Line " << entry.second.firstAppearance << ", "
-                      << "Usage Count: " << entry.second.usageCount
-                      << "\n";
-            if (!entry.second.value.empty()) {
+                 << "Type: " << entry.second.type << ", "
+                 << "Scope: " << entry.second.scope << ", "
+                 << "First Appearance: Line " << entry.second.firstAppearance << ", "
+                 << "Usage Count: " << entry.second.usageCount
+                 << "\n";
+            if (!entry.second.value.empty())
+            {
                 cout << ", Value: " << entry.second.value;
             }
             cout << "\n";
@@ -141,7 +161,8 @@ public:
 // ----------------------------------------------
 // 4. Lexer (purely lexical analysis)
 // ----------------------------------------------
-class Lexer {
+class Lexer
+{
 public:
     // A set of Python-like keywords (not exhaustive)
     unordered_set<string> pythonKeywords = {
@@ -149,74 +170,85 @@ public:
         "break", "class", "continue", "def", "del", "elif", "else",
         "except", "finally", "for", "from", "global", "if", "import",
         "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise",
-        "return", "try", "while", "with", "yield"
-    };
+        "return", "try", "while", "with", "yield"};
 
     // Some common single/multi-character operators
     unordered_set<string> operators = {
-        "+", "-", "*", "/", "%", "//", "**", "=", "==", "!=", "<", "<=", ">", ">="
-    };
+        "+", "-", "*", "/", "%", "//", "**", "=", "==", "!=", "<", "<=", ">", ">="};
 
     // Common delimiters
     unordered_set<char> delimiters = {
-        '(', ')', ':', ',', '.', '[', ']', '{', '}', ';'
-    };
+        '(', ')', ':', ',', '.', '[', ']', '{', '}', ';'};
 
     // The tokenize() function produces tokens without modifying the symbol table.
-    vector<Token> tokenize(const string& source)
+    vector<Token> tokenize(const string &source)
     {
         vector<Token> tokens;
         int lineNumber = 1;
         size_t i = 0;
 
-        while (i < source.size()) {
+        while (i < source.size())
+        {
             skipWhitespace(source, i);
-            if (i >= source.size()) break;
+            if (i >= source.size())
+                break;
 
             char c = source[i];
 
             // Handle newlines
-            if (c == '\n') {
+            if (c == '\n')
+            {
                 lineNumber++;
                 i++;
                 continue;
             }
 
             // Handle single-line comments (# ...)
-            if (c == '#') {
-                while (i < source.size() && source[i] != '\n') {
+            if (c == '#')
+            {
+                while (i < source.size() && source[i] != '\n')
+                {
                     i++;
                 }
                 continue;
             }
 
             // Handle triple-quoted strings
-            if (handleTripleQuotedString(source, i, lineNumber)) {
+            if (handleTripleQuotedString(source, i, lineNumber))
+            {
                 continue;
             }
 
             // Identify keywords or identifiers
-            if (isalpha(static_cast<unsigned char>(c)) || c == '_') {
+            if (isalpha(static_cast<unsigned char>(c)) || c == '_')
+            {
                 size_t start = i;
                 while (i < source.size() &&
-                       (isalnum(static_cast<unsigned char>(source[i])) || source[i] == '_')) {
+                       (isalnum(static_cast<unsigned char>(source[i])) || source[i] == '_'))
+                {
                     i++;
                 }
                 string word = source.substr(start, i - start);
-                if (pythonKeywords.find(word) != pythonKeywords.end()) {
+                if (pythonKeywords.find(word) != pythonKeywords.end())
+                {
                     tokens.push_back(Token(TokenType::KEYWORD, word, lineNumber));
-                } else {
+                }
+                else
+                {
                     tokens.push_back(Token(TokenType::IDENTIFIER, word, lineNumber));
                 }
                 continue;
             }
 
             // Handle operators (simple version)
-            if (isOperatorStart(c)) {
+            if (isOperatorStart(c))
+            {
                 // Check 2-char operators first
-                if ((i + 1) < source.size()) {
+                if ((i + 1) < source.size())
+                {
                     string twoChars = source.substr(i, 2);
-                    if (operators.find(twoChars) != operators.end()) {
+                    if (operators.find(twoChars) != operators.end())
+                    {
                         tokens.push_back(Token(TokenType::OPERATOR, twoChars, lineNumber));
                         i += 2;
                         continue;
@@ -224,7 +256,8 @@ public:
                 }
                 // Otherwise single-char operator
                 string oneChar(1, c);
-                if (operators.find(oneChar) != operators.end()) {
+                if (operators.find(oneChar) != operators.end())
+                {
                     tokens.push_back(Token(TokenType::OPERATOR, oneChar, lineNumber));
                     i++;
                     continue;
@@ -232,22 +265,26 @@ public:
             }
 
             // Handle string literals (single/double quotes)
-            if (c == '"' || c == '\'') {
+            if (c == '"' || c == '\'')
+            {
                 tokens.push_back(Token(
                     TokenType::STRING_LITERAL,
                     readStringLiteral(source, i, lineNumber),
-                    lineNumber
-                ));
+                    lineNumber));
                 continue;
             }
 
             // Handle numeric literals
-            if (isdigit(static_cast<unsigned char>(c))) {
+            if (isdigit(static_cast<unsigned char>(c)))
+            {
                 size_t start = i;
                 bool hasDot = false;
-                while (i < source.size() && (isdigit(source[i]) || source[i] == '.')) {
-                    if (source[i] == '.' && hasDot) break;
-                    else if (source[i] == '.') hasDot = true;
+                while (i < source.size() && (isdigit(source[i]) || source[i] == '.'))
+                {
+                    if (source[i] == '.' && hasDot)
+                        break;
+                    else if (source[i] == '.')
+                        hasDot = true;
                     i++;
                 }
                 string num = source.substr(start, i - start);
@@ -256,7 +293,8 @@ public:
             }
 
             // Handle delimiters
-            if (delimiters.find(c) != delimiters.end()) {
+            if (delimiters.find(c) != delimiters.end())
+            {
                 tokens.push_back(Token(TokenType::DELIMITER, string(1, c), lineNumber));
                 i++;
                 continue;
@@ -271,33 +309,42 @@ public:
     }
 
 private:
-    void skipWhitespace(const string& source, size_t& idx) {
+    void skipWhitespace(const string &source, size_t &idx)
+    {
         static const regex ws_regex(R"(^[ \t\r]+)");
         smatch match;
-        
-        if (idx >= source.size()) return;
-        
+
+        if (idx >= source.size())
+            return;
+
         string remaining = source.substr(idx);
-        if (regex_search(remaining, match, ws_regex)) {
+        if (regex_search(remaining, match, ws_regex))
+        {
             idx += match.length();
         }
     }
 
-    bool handleTripleQuotedString(const string& source, size_t &idx, int &lineNumber) {
-        if (idx + 2 < source.size()) {
+    bool handleTripleQuotedString(const string &source, size_t &idx, int &lineNumber)
+    {
+        if (idx + 2 < source.size())
+        {
             char c = source[idx];
             if ((c == '"' || c == '\'') &&
                 source[idx + 1] == c &&
-                source[idx + 2] == c) {
+                source[idx + 2] == c)
+            {
                 char quoteChar = c;
                 idx += 3; // skip opening triple quotes
-                while (idx + 2 < source.size()) {
-                    if (source[idx] == '\n') {
+                while (idx + 2 < source.size())
+                {
+                    if (source[idx] == '\n')
+                    {
                         lineNumber++;
                     }
                     if (source[idx] == quoteChar &&
                         source[idx + 1] == quoteChar &&
-                        source[idx + 2] == quoteChar) {
+                        source[idx + 2] == quoteChar)
+                    {
                         idx += 3; // skip closing triple quotes
                         break;
                     }
@@ -309,33 +356,39 @@ private:
         return false;
     }
 
-    bool isOperatorStart(char c) {
+    bool isOperatorStart(char c)
+    {
         regex operatorRegex("[+\\-*/%=!<>]");
         return regex_match(string(1, c), operatorRegex);
     }
-    
-    string readStringLiteral(const string& source, size_t &idx, int /*lineNumber*/) {
-        if (idx >= source.size()) return "";
-    
+
+    string readStringLiteral(const string &source, size_t &idx, int /*lineNumber*/)
+    {
+        if (idx >= source.size())
+            return "";
+
         char quote = source[idx];
         size_t start = idx;
-        
+
         // Construct regex pattern without raw string issues
         string pattern;
-        pattern += quote;                            // Opening quote
-        pattern += "(?:\\\\.|[^";                    // Escaped sequences or non-special chars
-        pattern += quote;                            // Add quote to excluded chars
-        pattern += "\\\\])*+";                       // Close group and add quantifier
-        pattern += quote;                            // Closing quote
-    
+        pattern += quote;         // Opening quote
+        pattern += "(?:\\\\.|[^"; // Escaped sequences or non-special chars
+        pattern += quote;         // Add quote to excluded chars
+        pattern += "\\\\])*+";    // Close group and add quantifier
+        pattern += quote;         // Closing quote
+
         regex re(pattern);
         smatch match;
         string remaining = source.substr(start);
-    
-        if (regex_search(remaining, match, re) && match.position() == 0) {
+
+        if (regex_search(remaining, match, re) && match.position() == 0)
+        {
             idx = start + match.length();
             return match.str();
-        } else {
+        }
+        else
+        {
             // Handle unterminated string
             idx = source.size();
             return source.substr(start);
@@ -346,50 +399,64 @@ private:
 // ----------------------------------------------
 // 5. Parser for basic type inference
 // ----------------------------------------------
-class Parser {
+class Parser
+{
 public:
-    Parser(const vector<Token>& tokens, SymbolTable& symTable)
+    Parser(const vector<Token> &tokens, SymbolTable &symTable)
         : tokens(tokens), symbolTable(symTable) {}
 
-    void parse() {
+    void parse()
+    {
         size_t i = 0;
-        while (i < tokens.size()) {
-            const Token& tk = tokens[i];
+        while (i < tokens.size())
+        {
+            const Token &tk = tokens[i];
 
-            if (tk.type == TokenType::KEYWORD) {
+            if (tk.type == TokenType::KEYWORD)
+            {
                 // If we see 'def' or 'class', record that for the next identifier
-                if (tk.lexeme == "def" || tk.lexeme == "class") {
+                if (tk.lexeme == "def" || tk.lexeme == "class")
+                {
                     lastKeyword = tk.lexeme;
-                } else {
+                }
+                else
+                {
                     lastKeyword.clear();
                 }
                 i++;
             }
-            else if (tk.type == TokenType::IDENTIFIER) {
+            else if (tk.type == TokenType::IDENTIFIER)
+            {
                 // If last keyword was 'def' or 'class', then this is a new function/class name
-                if (lastKeyword == "def") {
+                if (lastKeyword == "def")
+                {
                     symbolTable.addSymbol(tk.lexeme, "function", tk.lineNumber);
                     lastKeyword.clear();
                     i++;
                 }
-                else if (lastKeyword == "class") {
+                else if (lastKeyword == "class")
+                {
                     symbolTable.addSymbol(tk.lexeme, "class", tk.lineNumber);
                     lastKeyword.clear();
                     i++;
                 }
-                else {
+                else
+                {
                     // Check if next token is '=' (assignment)
                     if ((i + 1) < tokens.size() &&
                         tokens[i + 1].type == TokenType::OPERATOR &&
                         tokens[i + 1].lexeme == "=")
                     {
                         // We have "identifier = ..."
-                        const string& lhsName = tk.lexeme;
+                        const string &lhsName = tk.lexeme;
                         int lineNumber = tk.lineNumber;
                         // Add symbol if not exist
-                        if (!symbolTable.exist(lhsName)) {
+                        if (!symbolTable.exist(lhsName))
+                        {
                             symbolTable.addSymbol(lhsName, "unknown", lineNumber);
-                        } else {
+                        }
+                        else
+                        {
                             // If it exists, usage count will increment
                             symbolTable.table[lhsName].usageCount++;
                         }
@@ -399,24 +466,28 @@ public:
                         auto [rhsType, rhsValue] = parseExpression(i);
 
                         // Update the LHS symbol with the inferred type/value
-                        if (rhsType != "unknown") {
+                        if (rhsType != "unknown")
+                        {
                             symbolTable.updateType(lhsName, rhsType);
                         }
-                        if (!rhsValue.empty()) {
+                        if (!rhsValue.empty())
+                        {
                             symbolTable.updateValue(lhsName, rhsValue);
                         }
-
                     }
-                    else {
+                    else
+                    {
 
-                        if (symbolTable.exist(tk.lexeme)) {
+                        if (symbolTable.exist(tk.lexeme))
+                        {
                             symbolTable.table[tk.lexeme].usageCount++;
                         }
                         i++;
                     }
                 }
             }
-            else {
+            else
+            {
                 // We ignore other tokens (operators, delimiters, etc.) for now
                 i++;
             }
@@ -425,8 +496,8 @@ public:
 
 private:
 private:
-    const vector<Token>& tokens;
-    SymbolTable& symbolTable;
+    const vector<Token> &tokens;
+    SymbolTable &symbolTable;
     string lastKeyword;
 
     // ------------------------------------------------------
@@ -438,16 +509,20 @@ private:
     // We'll return the final type and a single literal value only
     // if the entire expression is a single literal. Otherwise, "".
     // ------------------------------------------------------
-    pair<string, string> parseExpression(size_t &i) {
+    pair<string, string> parseExpression(size_t &i)
+    {
         // Parse the first operand
         auto [accumType, accumValue] = parseOperand(i);
 
         // If we have multiple operators, unify the type.
-        while (i < tokens.size()) {
+        while (i < tokens.size())
+        {
             // Check if next token is +, -, *, /
-            if (tokens[i].type == TokenType::OPERATOR) {
+            if (tokens[i].type == TokenType::OPERATOR)
+            {
                 string op = tokens[i].lexeme;
-                if (op == "+" || op == "-" || op == "*" || op == "/") {
+                if (op == "+" || op == "-" || op == "*" || op == "/")
+                {
                     // consume the operator
                     i++;
                     // parse next operand
@@ -457,11 +532,15 @@ private:
                     // If we do actual arithmetic, we'd combine accumValue & nextValue,
                     // but for a multi-operand expression, let's just drop the literal:
                     accumValue = "";
-                } else {
+                }
+                else
+                {
                     // not a recognized operator for expression => break
                     break;
                 }
-            } else {
+            }
+            else
+            {
                 // next token is not an operator => expression ended
                 break;
             }
@@ -476,34 +555,43 @@ private:
     // This re-uses the same logic from a simplified version
     // of "inferTypeOfRHS" but for a single operand only.
     // ------------------------------------------------------
-    pair<string, string> parseOperand(size_t &i) {
-        if (i >= tokens.size()) {
+    pair<string, string> parseOperand(size_t &i)
+    {
+        if (i >= tokens.size())
+        {
             return {"unknown", ""};
         }
 
-        const Token& tk = tokens[i];
+        const Token &tk = tokens[i];
 
         // If it's a numeric literal
-        if (tk.type == TokenType::NUMBER) {
+        if (tk.type == TokenType::NUMBER)
+        {
             // check if there's a '.' => float
-            if (tk.lexeme.find('.') != string::npos) {
+            if (tk.lexeme.find('.') != string::npos)
+            {
                 i++;
                 return {"float", tk.lexeme};
-            } else {
+            }
+            else
+            {
                 i++;
                 return {"int", tk.lexeme};
             }
         }
 
         // If it's a string literal
-        if (tk.type == TokenType::STRING_LITERAL) {
+        if (tk.type == TokenType::STRING_LITERAL)
+        {
             i++;
             return {"string", tk.lexeme};
         }
 
         // If it's a keyword => might be True/False
-        if (tk.type == TokenType::KEYWORD) {
-            if (tk.lexeme == "True" || tk.lexeme == "False") {
+        if (tk.type == TokenType::KEYWORD)
+        {
+            if (tk.lexeme == "True" || tk.lexeme == "False")
+            {
                 i++;
                 return {"bool", tk.lexeme};
             }
@@ -512,29 +600,36 @@ private:
         }
 
         // If it's an identifier
-        if (tk.type == TokenType::IDENTIFIER) {
+        if (tk.type == TokenType::IDENTIFIER)
+        {
             string name = tk.lexeme;
             string knownType = symbolTable.getType(name);
             string knownValue = symbolTable.getValue(name);
-            if (!symbolTable.exist(name)) {
+            if (!symbolTable.exist(name))
+            {
                 symbolTable.addSymbol(name, "unknown", tk.lineNumber);
-            } else {
+            }
+            else
+            {
                 symbolTable.table[name].usageCount++;
             }
             i++;
-            return { knownType, knownType == "unknown" ? "" : knownValue };
+            return {knownType, knownType == "unknown" ? "" : knownValue};
         }
 
         // if it's a tuple
-        if(tk.lexeme == "("){
+        if (tk.lexeme == "(")
+        {
             string value = "(";
             i++;
-            while ( i < tokens.size () && tokens[i].lexeme != ")"){
-                //auto [type, value] = parseOperand(i); // if we want to know the type of the values stored too
+            while (i < tokens.size() && tokens[i].lexeme != ")")
+            {
+                // auto [type, value] = parseOperand(i); // if we want to know the type of the values stored too
                 value = value + tokens[i].lexeme;
                 i++;
             }
-            if(i < tokens.size() && tokens[i].lexeme == ")"){
+            if (i < tokens.size() && tokens[i].lexeme == ")")
+            {
                 i++;
             }
             value = value + ")";
@@ -542,14 +637,17 @@ private:
         }
 
         // if it's a list
-        if(tk.lexeme == "["){
+        if (tk.lexeme == "[")
+        {
             string value = "[";
             i++;
-            while ( i < tokens.size () && tokens[i].lexeme != "]"){
+            while (i < tokens.size() && tokens[i].lexeme != "]")
+            {
                 value = value + tokens[i].lexeme;
                 i++;
             }
-            if(i < tokens.size() && tokens[i].lexeme == "]"){
+            if (i < tokens.size() && tokens[i].lexeme == "]")
+            {
                 i++;
             }
             value = value + "]";
@@ -557,18 +655,22 @@ private:
         }
 
         // if it's a dictionary or set
-        if(tk.lexeme == "{"){
+        if (tk.lexeme == "{")
+        {
             string value = "{";
             i++;
             bool isSet = true;
-            while ( i < tokens.size () && tokens[i].lexeme != "}"){
-                if(tokens[i].lexeme == ":"){
+            while (i < tokens.size() && tokens[i].lexeme != "}")
+            {
+                if (tokens[i].lexeme == ":")
+                {
                     isSet = false;
                 }
                 value = value + tokens[i].lexeme;
                 i++;
             }
-            if(i < tokens.size() && tokens[i].lexeme == "}"){
+            if (i < tokens.size() && tokens[i].lexeme == "}")
+            {
                 i++;
             }
             value = value + "}";
@@ -589,39 +691,48 @@ private:
     // - if there's a conflict (e.g., "string" + "int"), => "unknown"
     // Expand this if you want to handle more complex rules
     // ------------------------------------------------------
-    string unifyTypes(const string& t1, const string& t2) {
+    string unifyTypes(const string &t1, const string &t2)
+    {
         if (t1 == "unknown" && t2 == "unknown")
             return "unknown";
-        if (t1 == "unknown") return t2;
-        if (t2 == "unknown") return t1;
+        if (t1 == "unknown")
+            return t2;
+        if (t2 == "unknown")
+            return t1;
 
         // If either is float => float
-        if (t1 == "float" || t2 == "float") {
+        if (t1 == "float" || t2 == "float")
+        {
             // If one is string and other is float => unknown, or you can define a rule
             if (t1 == "string" || t2 == "string" ||
-                t1 == "bool"   || t2 == "bool") {
+                t1 == "bool" || t2 == "bool")
+            {
                 return "unknown";
             }
             return "float";
         }
 
         // If both are int => int
-        if (t1 == "int" && t2 == "int") {
+        if (t1 == "int" && t2 == "int")
+        {
             return "int";
         }
 
         // If both are bool => bool (some languages let you do bool+bool => int, but we'll keep it simple)
-        if (t1 == "bool" && t2 == "bool") {
+        if (t1 == "bool" && t2 == "bool")
+        {
             return "bool";
         }
 
         // If either is string => let's say "unknown" for arithmetic
-        if (t1 == "string" || t2 == "string") {
+        if (t1 == "string" || t2 == "string")
+        {
             return "unknown";
         }
 
         // If they're the same, return it
-        if (t1 == t2) {
+        if (t1 == t2)
+        {
             return t1;
         }
 
@@ -633,9 +744,11 @@ private:
 // ----------------------------------------------
 // 6. Utility function to read the entire file
 // ----------------------------------------------
-string readFile(const string& filename) {
+string readFile(const string &filename)
+{
     ifstream fileStream(filename);
-    if (!fileStream.is_open()) {
+    if (!fileStream.is_open())
+    {
         throw runtime_error("Could not open file: " + filename);
     }
     stringstream buffer;
@@ -646,8 +759,10 @@ string readFile(const string& filename) {
 // ----------------------------------------------
 // 7. Main
 // ----------------------------------------------
-int main() {
-    try {
+int main()
+{
+    try
+    {
         // 1. Read Python-like source code from an external file
         string sourceCode = readFile("script.py");
 
@@ -657,17 +772,35 @@ int main() {
 
         // 3. Print out tokens (for demonstration)
         cout << "Tokens:\n";
-        for (auto &tk : tokens) {
+        for (auto &tk : tokens)
+        {
             cout << "  Line " << tk.lineNumber << " | ";
-            switch (tk.type) {
-                case TokenType::KEYWORD:        cout << "KEYWORD";        break;
-                case TokenType::IDENTIFIER:     cout << "IDENTIFIER";     break;
-                case TokenType::NUMBER:         cout << "NUMBER";         break;
-                case TokenType::OPERATOR:       cout << "OPERATOR";       break;
-                case TokenType::DELIMITER:      cout << "DELIMITER";      break;
-                case TokenType::STRING_LITERAL: cout << "STRING_LITERAL"; break;
-                case TokenType::COMMENT:        cout << "COMMENT";        break;
-                case TokenType::UNKNOWN:        cout << "UNKNOWN";        break;
+            switch (tk.type)
+            {
+            case TokenType::KEYWORD:
+                cout << "KEYWORD";
+                break;
+            case TokenType::IDENTIFIER:
+                cout << "IDENTIFIER";
+                break;
+            case TokenType::NUMBER:
+                cout << "NUMBER";
+                break;
+            case TokenType::OPERATOR:
+                cout << "OPERATOR";
+                break;
+            case TokenType::DELIMITER:
+                cout << "DELIMITER";
+                break;
+            case TokenType::STRING_LITERAL:
+                cout << "STRING_LITERAL";
+                break;
+            case TokenType::COMMENT:
+                cout << "COMMENT";
+                break;
+            case TokenType::UNKNOWN:
+                cout << "UNKNOWN";
+                break;
             }
             cout << " | Lexeme: " << tk.lexeme << "\n";
         }
@@ -681,7 +814,8 @@ int main() {
         // 5. Print final symbol table
         symTable.printSymbols();
     }
-    catch (const exception &ex) {
+    catch (const exception &ex)
+    {
         cerr << "Error: " << ex.what() << endl;
         return 1;
     }

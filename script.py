@@ -2,7 +2,7 @@
 A multi-line docstring at the top of the file
 """
 import math
-
+x = 1 # a global variable
 class MyClass:
     # This is a class-level comment
     def __init__(self, name):
@@ -49,13 +49,12 @@ def main():
     test = True
     test2 = False
     test3 = test | test2
-    y = x << 2 # This is a bitwise left shift operation
-    z = y >> 1 # This is a bitwise right shift operation
-    q = ~y
+    #y = x << 2 # This is a bitwise left shift operation
+    #z = y >> 1 # This is a bitwise right shift operation
+    #q = ~y
     r = 20.5
     haga_bayna_aktar = 0.5
     print(f"Test3: {test3}")
     print(result)
 if __name__ == "__main__":
     main()
-    

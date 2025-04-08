@@ -15,48 +15,13 @@ using namespace std;
 // ----------------------------------------------
 enum class TokenType
 {
-    FalseKeyword,
-    NoneKeyword,
-    TrueKeyword,
-    AndKeyword,
-    AsKeyword,
-    AssertKeyword,
-    AsyncKeyword,
-    AwaitKeyword,
-    BreakKeyword,
-    ClassKeyword,
-    ContinueKeyword,
-    DefKeyword,
-    DelKeyword,
-    ElifKeyword,
-    ElseKeyword,
-    ExceptKeyword,
-    FinallyKeyword,
-    ForKeyword,
-    FromKeyword,
-    GlobalKeyword,
-    IfKeyword,
-    ImportKeyword,
-    InKeyword,
-    IsKeyword,
-    LambdaKeyword,
-    NonlocalKeyword,
-    NotKeyword,
-    OrKeyword,
-    PassKeyword,
-    RaiseKeyword,
-    ReturnKeyword,
-    TryKeyword,
-    WhileKeyword,
-    WithKeyword,
-    YieldKeyword,
-    IDENTIFIER,
-    NUMBER,
-    OPERATOR,
-    DELIMITER,
-    STRING_LITERAL,
-    COMMENT,
-    UNKNOWN
+    FalseKeyword, NoneKeyword, TrueKeyword, AndKeyword, AsKeyword, AssertKeyword, AsyncKeyword, AwaitKeyword,
+    BreakKeyword, ClassKeyword, ContinueKeyword, DefKeyword, DelKeyword, ElifKeyword, ElseKeyword, ExceptKeyword,
+    FinallyKeyword, ForKeyword, FromKeyword, GlobalKeyword, IfKeyword, ImportKeyword, InKeyword, IsKeyword,
+    LambdaKeyword, NonlocalKeyword, NotKeyword, OrKeyword, PassKeyword, RaiseKeyword, ReturnKeyword, TryKeyword,
+    WhileKeyword, WithKeyword, YieldKeyword, 
+    IDENTIFIER, NUMBER, OPERATOR , STRING_LITERAL, COMMENT, UNKNOWN, LeftParenthesis, RightParenthesis,
+    LeftBracket, RightBracket, LeftBrace, RightBrace, Colon, Comma, Dot, Semicolon
 };
 
 // ----------------------------------------------
@@ -67,9 +32,10 @@ struct Token
     TokenType type;
     string lexeme;
     int lineNumber;
+    string scope;
 
-    Token(TokenType t, const string &l, int line)
-        : type(t), lexeme(l), lineNumber(line) {}
+    Token(TokenType t, const string &l, int line, const string &s = "")
+        : type(t), lexeme(l), lineNumber(line), scope(s) {}
 };
 
 // ----------------------------------------------
@@ -93,36 +59,39 @@ public:
     unordered_map<string, SymbolInfo> table;
 
     void addSymbol(const string &name, const string &type,
-                   int lineNumber, const string &scope = "global",
+                   int lineNumber, const string &scope,
                    const string &val = "")
     {
-        auto it = table.find(name);
-        if (it == table.end())
+    // Create a unique key consisting of  the name and scope
+    string uniqueKey = name + "@" + scope;
+
+    auto it = table.find(uniqueKey);
+    if (it == table.end())
+    {
+        // If this symbol hasn't appeared before, create an entry
+        SymbolInfo info;
+        info.type = type;
+        info.scope = scope;
+        info.firstAppearance = lineNumber;
+        info.usageCount = 1;
+        info.value = val;
+        table[uniqueKey] = info;
+    }
+    else
+    {
+        // If the symbol already exists in the same scope, update its information
+        it->second.usageCount++;
+        // If the type was unknown before, or if we want to override it, do so:
+        if (it->second.type == "unknown" && type != "unknown")
         {
-            // If this symbol hasn't appeared before, create an entry
-            SymbolInfo info;
-            info.type = type;
-            info.scope = scope;
-            info.firstAppearance = lineNumber;
-            info.usageCount = 1;
-            info.value = val;
-            table[name] = info;
+            it->second.type = type;
         }
-        else
+        // Update the value if we explicitly have a new one
+        if (!val.empty())
         {
-            // If it already exists, increment usage and possibly update the type/value
-            it->second.usageCount++;
-            // If the type was unknown before, or if we want to override it, do so:
-            if (it->second.type == "unknown" && type != "unknown")
-            {
-                it->second.type = type;
-            }
-            // Update the value if we explicitly have a new one
-            if (!val.empty())
-            {
-                it->second.value = val;
-            }
+            it->second.value = val;
         }
+    }
     }
 
     // Allows updating a symbol's type after creation.
@@ -177,17 +146,23 @@ public:
         cout << "Symbol Table:\n";
         for (auto &entry : table)
         {
-            cout << "  " << entry.first << " => "
-                 << "Type: " << entry.second.type << ", "
-                 << "Scope: " << entry.second.scope << ", "
-                 << "First Appearance: Line " << entry.second.firstAppearance << ", "
-                 << "Usage Count: " << entry.second.usageCount
-                 << "\n";
-            if (!entry.second.value.empty())
-            {
-                cout << ", Value: " << entry.second.value;
-            }
-            cout << "\n";
+            const string &uniqueKey = entry.first;
+        const SymbolInfo &info = entry.second;
+
+        size_t atPos = uniqueKey.find('@');
+        string name = uniqueKey.substr(0, atPos);
+        string scope = uniqueKey.substr(atPos + 1);
+
+        cout << "  Name: " << name << ", Scope: " << scope
+             << ", Type: " << info.type
+             << ", First Appearance: Line " << info.firstAppearance
+             << ", Usage Count: " << info.usageCount;
+
+        if (!info.value.empty())
+        {
+            cout << ", Value: " << info.value;
+        }
+        cout << "\n";
         }
     }
 };
@@ -238,11 +213,24 @@ public:
 
     // Some common single/multi-character operators
     unordered_set<string> operators = {
-        "+", "-", "*", "/", "%", "//", "**", "=", "==", "!=", "<", "<=", ">", ">="};
+        "+", "-", "*", "/", "%", "//", "**", "=", "==", "!=", "<", "<=", ">", 
+        ">=", "+=", "-=", "*=", "/=", "%=", "//=", "**=","|", "&", "^", "~", "<<", ">>"};
 
     // Common delimiters
-    unordered_set<char> delimiters = {
-        '(', ')', ':', ',', '.', '[', ']', '{', '}', ';'};
+    unordered_map<char, TokenType> punctuationSymbols = {
+        {'(', TokenType::LeftParenthesis},
+        {')', TokenType::RightParenthesis},
+        {':', TokenType::Colon},
+        {',', TokenType::Comma},
+        {'.', TokenType::Dot},
+        {'[', TokenType::LeftBracket},
+        {']', TokenType::RightBracket},
+        {'{', TokenType::LeftBrace},
+        {'}', TokenType::RightBrace},
+        {';', TokenType::Semicolon}
+    };
+
+    string currentScope = "";
 
     // The tokenize() function produces tokens without modifying the symbol table.
     vector<Token> tokenize(const string &source)
@@ -301,11 +289,26 @@ public:
                 string word = source.substr(start, i - start);
                 if (pythonKeywords.find(word) != pythonKeywords.end())
                 {
+                    // change the scope if it is a function or class
+                    if(word == "def" || word == "class"){
+                        skipWhitespace(source, i);
+                        size_t identifierStart = i;
+                        while (i < source.size() && (isalnum(static_cast<unsigned char>(source[i])) || source[i] == '_'))
+                    {
+                        i++;
+                    }
+                    if (identifierStart < i)
+                    {
+                        currentScope = source.substr(identifierStart, i - identifierStart);
+                        //cout<<"Current scope: " << currentScope << endl;
+                    }
                     tokens.push_back(Token(pythonKeywords[word], word, lineNumber));
+                    }
                 }
                 else
                 {
-                    tokens.push_back(Token(TokenType::IDENTIFIER, word, lineNumber));
+                    tokens.push_back(Token(TokenType::IDENTIFIER, word, lineNumber, currentScope));
+                    //cout<< "scope of " << word << " is " << currentScope << endl;
                 }
                 continue;
             }
@@ -362,10 +365,10 @@ public:
                 continue;
             }
 
-            // Handle delimiters
-            if (delimiters.find(c) != delimiters.end())
+            // Handle punctuation symbols
+            if (punctuationSymbols.find(c) != punctuationSymbols.end())
             {
-                tokens.push_back(Token(TokenType::DELIMITER, string(1, c), lineNumber));
+                tokens.push_back(Token(punctuationSymbols[c], string(1, c), lineNumber));
                 i++;
                 continue;
             }
@@ -503,13 +506,13 @@ public:
                 // If last keyword was 'def' or 'class', then this is a new function/class name
                 if (lastKeyword == "def")
                 {
-                    symbolTable.addSymbol(tk.lexeme, "function", tk.lineNumber);
+                    symbolTable.addSymbol(tk.lexeme, "function", tk.lineNumber, tk.scope);
                     lastKeyword.clear();
                     i++;
                 }
                 else if (lastKeyword == "class")
                 {
-                    symbolTable.addSymbol(tk.lexeme, "class", tk.lineNumber);
+                    symbolTable.addSymbol(tk.lexeme, "class", tk.lineNumber, tk.scope);
                     lastKeyword.clear();
                     i++;
                 }
@@ -526,7 +529,7 @@ public:
                         // Add symbol if not exist
                         if (!symbolTable.exist(lhsName))
                         {
-                            symbolTable.addSymbol(lhsName, "unknown", lineNumber);
+                            symbolTable.addSymbol(lhsName, "unknown", lineNumber, tk.scope);
                         }
                         else
                         {
@@ -680,7 +683,7 @@ private:
             string knownValue = symbolTable.getValue(name);
             if (!symbolTable.exist(name))
             {
-                symbolTable.addSymbol(name, "unknown", tk.lineNumber);
+                symbolTable.addSymbol(name, "unknown", tk.lineNumber, tk.scope);
             }
             else
             {
@@ -964,8 +967,35 @@ int main()
             case TokenType::OPERATOR:
                 cout << "OPERATOR";
                 break;
-            case TokenType::DELIMITER:
-                cout << "DELIMITER";
+            case TokenType::LeftParenthesis:
+                cout << "LeftParenthesis";
+                break;
+            case TokenType::RightParenthesis:
+                cout << "RightParenthesis";
+                break;
+            case TokenType::LeftBracket:
+                cout << "LeftBracket";
+                break;
+            case TokenType::RightBracket:
+                cout << "RightBracket";
+                break;
+            case TokenType::LeftBrace:
+                cout << "LeftBrace";
+                break;
+            case TokenType::RightBrace:
+                cout << "RightBrace";
+                break;
+            case TokenType::Colon:
+                cout << "Colon";
+                break;
+            case TokenType::Comma:
+                cout << "Comma";
+                break;
+            case TokenType::Dot:
+                cout << "Dot";
+                break;
+            case TokenType::Semicolon:
+                cout << "Semicolon";
                 break;
             case TokenType::STRING_LITERAL:
                 cout << "STRING_LITERAL";

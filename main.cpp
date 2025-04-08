@@ -15,7 +15,41 @@ using namespace std;
 // ----------------------------------------------
 enum class TokenType
 {
-    KEYWORD,
+    FalseKeyword,
+    NoneKeyword,
+    TrueKeyword,
+    AndKeyword,
+    AsKeyword,
+    AssertKeyword,
+    AsyncKeyword,
+    AwaitKeyword,
+    BreakKeyword,
+    ClassKeyword,
+    ContinueKeyword,
+    DefKeyword,
+    DelKeyword,
+    ElifKeyword,
+    ElseKeyword,
+    ExceptKeyword,
+    FinallyKeyword,
+    ForKeyword,
+    FromKeyword,
+    GlobalKeyword,
+    IfKeyword,
+    ImportKeyword,
+    InKeyword,
+    IsKeyword,
+    LambdaKeyword,
+    NonlocalKeyword,
+    NotKeyword,
+    OrKeyword,
+    PassKeyword,
+    RaiseKeyword,
+    ReturnKeyword,
+    TryKeyword,
+    WhileKeyword,
+    WithKeyword,
+    YieldKeyword,
     IDENTIFIER,
     NUMBER,
     OPERATOR,
@@ -164,13 +198,43 @@ public:
 class Lexer
 {
 public:
-    // A set of Python-like keywords (not exhaustive)
-    unordered_set<string> pythonKeywords = {
-        "False", "None", "True", "and", "as", "assert", "async", "await",
-        "break", "class", "continue", "def", "del", "elif", "else",
-        "except", "finally", "for", "from", "global", "if", "import",
-        "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise",
-        "return", "try", "while", "with", "yield"};
+    unordered_map<string, TokenType> pythonKeywords = {
+        {"False", TokenType::FalseKeyword},
+        {"None", TokenType::NoneKeyword},
+        {"True", TokenType::TrueKeyword},
+        {"and", TokenType::AndKeyword},
+        {"as", TokenType::AsKeyword},
+        {"assert", TokenType::AssertKeyword},
+        {"async", TokenType::AsyncKeyword},
+        {"await", TokenType::AwaitKeyword},
+        {"break", TokenType::BreakKeyword},
+        {"class", TokenType::ClassKeyword},
+        {"continue", TokenType::ContinueKeyword},
+        {"def", TokenType::DefKeyword},
+        {"del", TokenType::DelKeyword},
+        {"elif", TokenType::ElifKeyword},
+        {"else", TokenType::ElseKeyword},
+        {"except", TokenType::ExceptKeyword},
+        {"finally", TokenType::FinallyKeyword},
+        {"for", TokenType::ForKeyword},
+        {"from", TokenType::FromKeyword},
+        {"global", TokenType::GlobalKeyword},
+        {"if", TokenType::IfKeyword},
+        {"import", TokenType::ImportKeyword},
+        {"in", TokenType::InKeyword},
+        {"is", TokenType::IsKeyword},
+        {"lambda", TokenType::LambdaKeyword},
+        {"nonlocal", TokenType::NonlocalKeyword},
+        {"not", TokenType::NotKeyword},
+        {"or", TokenType::OrKeyword},
+        {"pass", TokenType::PassKeyword},
+        {"raise", TokenType::RaiseKeyword},
+        {"return", TokenType::ReturnKeyword},
+        {"try", TokenType::TryKeyword},
+        {"while", TokenType::WhileKeyword},
+        {"with", TokenType::WithKeyword},
+        {"yield", TokenType::YieldKeyword}
+    };
 
     // Some common single/multi-character operators
     unordered_set<string> operators = {
@@ -225,7 +289,7 @@ public:
                 continue;
             }
 
-            // Identify keywords or identifiers
+            // Identify keywords and identifiers
             if (isalpha(static_cast<unsigned char>(c)) || c == '_')
             {
                 size_t start = i;
@@ -237,7 +301,7 @@ public:
                 string word = source.substr(start, i - start);
                 if (pythonKeywords.find(word) != pythonKeywords.end())
                 {
-                    tokens.push_back(Token(TokenType::KEYWORD, word, lineNumber));
+                    tokens.push_back(Token(pythonKeywords[word], word, lineNumber));
                 }
                 else
                 {
@@ -421,7 +485,7 @@ public:
         {
             const Token &tk = tokens[i];
 
-            if (tk.type == TokenType::KEYWORD)
+            if (tk.type == TokenType::DefKeyword || tk.type == TokenType::ClassKeyword)
             {
                 // If we see 'def' or 'class', record that for the next identifier
                 if (tk.lexeme == "def" || tk.lexeme == "class")
@@ -597,7 +661,7 @@ private:
         }
 
         // If it's a keyword => might be True/False
-        if (tk.type == TokenType::KEYWORD)
+        if (tk.type == TokenType::FalseKeyword || tk.type == TokenType::TrueKeyword)
         {
             if (tk.lexeme == "True" || tk.lexeme == "False")
             {
@@ -786,8 +850,110 @@ int main()
             cout << "  Line " << tk.lineNumber << " | ";
             switch (tk.type)
             {
-            case TokenType::KEYWORD:
-                cout << "KEYWORD";
+            case TokenType::FalseKeyword:
+                cout << "FalseKeyword";
+                break;
+            case TokenType::NoneKeyword:
+                cout << "NoneKeyword";
+                break;
+            case TokenType::TrueKeyword:
+                cout << "TrueKeyword";
+                break;
+            case TokenType::AndKeyword:
+                cout << "AndKeyword";
+                break;
+            case TokenType::AsKeyword:
+                cout << "AsKeyword";
+                break;
+            case TokenType::AssertKeyword:
+                cout << "AssertKeyword";
+                break;
+            case TokenType::AsyncKeyword:
+                cout << "AsyncKeyword";
+                break;
+            case TokenType::AwaitKeyword:
+                cout << "AwaitKeyword";
+                break;
+            case TokenType::BreakKeyword:
+                cout << "BreakKeyword";
+                break;
+            case TokenType::ClassKeyword:
+                cout << "ClassKeyword";
+                break;
+            case TokenType::ContinueKeyword:
+                cout << "ContinueKeyword";
+                break;
+            case TokenType::DefKeyword:
+                cout << "DefKeyword";
+                break;
+            case TokenType::DelKeyword:
+                cout << "DelKeyword";
+                break;
+            case TokenType::ElifKeyword:
+                cout << "ElifKeyword";
+                break;
+            case TokenType::ElseKeyword:
+                cout << "ElseKeyword";
+                break;
+            case TokenType::ExceptKeyword:
+                cout << "ExceptKeyword";
+                break;
+            case TokenType::FinallyKeyword:
+                cout << "FinallyKeyword";
+                break;
+            case TokenType::ForKeyword:
+                cout << "ForKeyword";
+                break;
+            case TokenType::FromKeyword:
+                cout << "FromKeyword";
+                break;
+            case TokenType::GlobalKeyword:
+                cout << "GlobalKeyword";
+                break;
+            case TokenType::IfKeyword:
+                cout << "IfKeyword";
+                break;
+            case TokenType::ImportKeyword:
+                cout << "ImportKeyword";
+                break;
+            case TokenType::InKeyword:
+                cout << "InKeyword";
+                break;
+            case TokenType::IsKeyword:
+                cout << "IsKeyword";
+                break;
+            case TokenType::LambdaKeyword:
+                cout << "LambdaKeyword";
+                break;
+            case TokenType::NonlocalKeyword:
+                cout << "NonlocalKeyword";
+                break;
+            case TokenType::NotKeyword:
+                cout << "NotKeyword";
+                break;
+            case TokenType::OrKeyword:
+                cout << "OrKeyword";
+                break;
+            case TokenType::PassKeyword:
+                cout << "PassKeyword";
+                break;
+            case TokenType::RaiseKeyword:
+                cout << "RaiseKeyword";
+                break;
+            case TokenType::ReturnKeyword:
+                cout << "ReturnKeyword";
+                break;
+            case TokenType::TryKeyword:
+                cout << "TryKeyword";
+                break;
+            case TokenType::WhileKeyword:
+                cout << "WhileKeyword";
+                break;
+            case TokenType::WithKeyword:
+                cout << "WithKeyword";
+                break;
+            case TokenType::YieldKeyword:
+                cout << "YieldKeyword";
                 break;
             case TokenType::IDENTIFIER:
                 cout << "IDENTIFIER";

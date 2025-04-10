@@ -282,6 +282,9 @@ public:
                         tokens.push_back(Token(TokenType::IDENTIFIER, identifier, lineNumber, currentScope));
                     }
                     }
+                    else{
+                        tokens.push_back(Token(pythonKeywords[word], word, lineNumber));
+                    }
                 }
                 else
                 {
@@ -798,7 +801,11 @@ private:
 };
 
 // ----------------------------------------------
-// 6. Utility function to read the entire file
+// 6. Error handles
+// ----------------------------------------------
+
+// ----------------------------------------------
+// 7. Utility function to read the entire file
 // ----------------------------------------------
 string readFile(const string &filename)
 {
@@ -813,7 +820,7 @@ string readFile(const string &filename)
 }
 
 // ----------------------------------------------
-// 7. Main
+// 8. Main
 // ----------------------------------------------
 int main()
 {

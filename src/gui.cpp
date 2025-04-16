@@ -70,22 +70,35 @@ void CompilerGUI::loadFile()
 
 void CompilerGUI::compile()
 {
+    errors.clear(); // Clear previous errors
     try
     {
-        // Use your existing compiler logic
+        // Use your existing compiler logic with error collection
         SymbolTable symbols;
-        auto tokens = Lexer().tokenize(codeBuffer);
-        Parser(tokens, symbols).parse();
+        std::vector<Error> tokenErrors;
+        auto tokens = Lexer().tokenize(codeBuffer, tokenErrors);
 
-        // Format symbol table output
-        std::stringstream ss;
-        symbols.printSymbols(ss);
-        symbolTableOutput = ss.str();
-        errorOutput.clear();
+        // Add tokenization errors to main error list
+        errors.insert(errors.end(), tokenErrors.begin(), tokenErrors.end());
+
+        // Only proceed if no tokenization errors
+        if (errors.empty())
+        {
+            Parser(tokens, symbols).parse();
+
+            // Format symbol table output
+            std::stringstream ss;
+            symbols.printSymbols(ss);
+            symbolTableOutput = ss.str();
+        }
+    }
+    catch (const UnterminatedStringError &e)
+    {
+        errors.push_back({"Unterminated string literal", e.line_number, e.index});
     }
     catch (const std::exception &e)
     {
-        errorOutput = "Compilation Error: " + std::string(e.what());
+        errors.push_back({e.what(), -1, 0}); // Generic error
     }
 }
 
@@ -114,15 +127,16 @@ void CompilerGUI::render()
                         codeBuffer.assign(
                             (std::istreambuf_iterator<char>(file)),
                             std::istreambuf_iterator<char>());
+                        errors.clear(); // Clear errors when loading new file
                     }
                     else
                     {
-                        errorOutput = "Failed to open file: " + filePath;
+                        errors.push_back({"Failed to open file: " + filePath, -1, 0});
                     }
                 }
                 catch (const std::exception &e)
                 {
-                    errorOutput = "File Error: " + std::string(e.what());
+                    errors.push_back({"File Error: " + std::string(e.what()), -1, 0});
                 }
             }
             ImGuiFileDialog::Instance()->Close();
@@ -168,12 +182,19 @@ void CompilerGUI::render()
                 ImGui::EndChild();
             }
 
-            // Error display
-            if (!errorOutput.empty())
+            // Error display section
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(1, 0, 0, 1), "Errors:");
+            if (ImGui::BeginChild("Errors", ImVec2(0, 150), true))
             {
-                ImGui::Separator();
-                ImGui::TextColored(ImVec4(1, 0, 0, 1), "Errors:");
-                ImGui::TextWrapped("%s", errorOutput.c_str());
+                for (const auto &error : errors)
+                {
+                    ImGui::TextWrapped("Line %d, Pos %zu: %s",
+                                       error.line,
+                                       error.position,
+                                       error.message.c_str());
+                }
+                ImGui::EndChild();
             }
 
             ImGui::End(); // Single End() for main window

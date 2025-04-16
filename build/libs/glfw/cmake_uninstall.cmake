@@ -1,9 +1,9 @@
 
-if (NOT EXISTS "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/Python-Compiler/build/libs/glfw/install_manifest.txt")
-    message(FATAL_ERROR "Cannot find install manifest: \"E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/Python-Compiler/build/libs/glfw/install_manifest.txt\"")
+if (NOT EXISTS "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/with gui Python-Compiler/build/libs/glfw/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: \"E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/with gui Python-Compiler/build/libs/glfw/install_manifest.txt\"")
 endif()
 
-file(READ "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/Python-Compiler/build/libs/glfw/install_manifest.txt" files)
+file(READ "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/with gui Python-Compiler/build/libs/glfw/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 
 foreach (file ${files})

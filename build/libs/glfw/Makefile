@@ -56,10 +56,10 @@ RM = C:\msys64\ucrt64\bin\cmake.exe -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler"
+CMAKE_SOURCE_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build"
+CMAKE_BINARY_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -131,14 +131,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build\CMakeFiles" "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build\libs\glfw\\CMakeFiles\progress.marks"
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build\CMakeFiles" 0
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build\CMakeFiles" "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build\libs\glfw\\CMakeFiles\progress.marks"
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/clean
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/clean
 .PHONY : clean
 
 # The main clean target
@@ -147,22 +147,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/preinstall
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/preinstall
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 1
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 libs/glfw/CMakeFiles/uninstall.dir/rule:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/CMakeFiles/uninstall.dir/rule
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/glfw/CMakeFiles/uninstall.dir/rule
 .PHONY : libs/glfw/CMakeFiles/uninstall.dir/rule
 
 # Convenience name for target.
@@ -171,7 +171,7 @@ uninstall: libs/glfw/CMakeFiles/uninstall.dir/rule
 
 # fast build rule for target.
 uninstall/fast:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\glfw\CMakeFiles\uninstall.dir\build.make libs/glfw/CMakeFiles/uninstall.dir/build
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\glfw\CMakeFiles\uninstall.dir\build.make libs/glfw/CMakeFiles/uninstall.dir/build
 .PHONY : uninstall/fast
 
 # Help Target
@@ -198,6 +198,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 0
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -74,7 +74,7 @@ string SymbolTable::getValue(const string &name, const string &scope)
     return it != table.end() ? it->second.value : "";
 }
 
-void SymbolTable::printSymbols(std::ostream &out)
+void SymbolTable::printSymbols(ostream &out)
 {
     out << "Symbol Table:\n";
     for (auto &[key, info] : table)
@@ -96,7 +96,7 @@ void SymbolTable::printSymbols(std::ostream &out)
 // ----------------------------------------------
 // Lexer Implementation
 // ----------------------------------------------
-vector<Token> Lexer::tokenize(const string &source)
+vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
 {
     vector<Token> tokens;
     int lineNumber = 1;
@@ -129,14 +129,22 @@ vector<Token> Lexer::tokenize(const string &source)
         }
 
         int startlineNumber = lineNumber;
-        string triplestring = handleTripleQuotedString(source, i, lineNumber);
-        // Handle triple-quoted strings
-        if (triplestring.length())
+        try
         {
-            tokens.push_back(Token(
-                TokenType::STRING_LITERAL,
-                triplestring,
-                startlineNumber));
+            string triplestring = handleTripleQuotedString(source, i, lineNumber);
+            // Handle triple-quoted strings
+            if (triplestring.length())
+            {
+                tokens.push_back(Token(
+                    TokenType::STRING_LITERAL,
+                    triplestring,
+                    startlineNumber));
+                continue;
+            }
+        }
+        catch (const UnterminatedStringError &e)
+        {
+            errors.push_back({"Unterminated triple-quoted string", e.line_number, e.index});
             continue;
         }
 
@@ -186,7 +194,18 @@ vector<Token> Lexer::tokenize(const string &source)
         // Handle operators (simple version)
         if (isOperatorStart(c))
         {
-            // Check 2-char operators first
+            // check 3-char operators first
+            if ((i + 2) < source.size())
+            {
+                string threeChars = source.substr(i, 3);
+                if (operators.find(threeChars) != operators.end())
+                {
+                    tokens.push_back(Token(TokenType::OPERATOR, threeChars, lineNumber));
+                    i += 3;
+                    continue;
+                }
+            }
+            // Check 2-char operators
             if ((i + 1) < source.size())
             {
                 string twoChars = source.substr(i, 2);
@@ -207,13 +226,21 @@ vector<Token> Lexer::tokenize(const string &source)
             }
         }
 
-        // Handle string literals (single/double quotes)
+        // Handle string literals with error checking
         if (c == '"' || c == '\'')
         {
-            tokens.push_back(Token(
-                TokenType::STRING_LITERAL,
-                readStringLiteral(source, i, lineNumber),
-                lineNumber));
+            try
+            {
+                string str = handleDoubleQuotedString(source, i, lineNumber);
+                tokens.push_back(Token(
+                    TokenType::STRING_LITERAL,
+                    str,
+                    lineNumber));
+            }
+            catch (const UnterminatedStringError &e)
+            {
+                errors.push_back({"Unterminated string literal", e.line_number, e.index});
+            }
             continue;
         }
 
@@ -231,6 +258,11 @@ vector<Token> Lexer::tokenize(const string &source)
                 i++;
             }
             string num = source.substr(start, i - start);
+            if (num[0] == '0' && std::stoi(num) != 0 && !hasDot)
+            {
+                errors.push_back({"leading zeros in decimal integer literals are not permitted", lineNumber, start});
+                continue;
+            }
             tokens.push_back(Token(TokenType::NUMBER, num, lineNumber));
             continue;
         }
@@ -243,8 +275,8 @@ vector<Token> Lexer::tokenize(const string &source)
             continue;
         }
 
-        // Otherwise treat as UNKNOWN
-        tokens.push_back(Token(TokenType::UNKNOWN, string(1, c), lineNumber));
+        // Unknown character - add error but keep going
+        errors.push_back({"Invalid character '" + string(1, c) + "'", lineNumber, i});
         i++;
     }
 
@@ -268,7 +300,7 @@ void Lexer::skipWhitespace(const string &source, size_t &idx)
 
 string Lexer::handleTripleQuotedString(const string &source, size_t &idx, int &lineNumber)
 {
-    string mystring = "\"\"\" ";
+    int start_line = lineNumber;
     if (idx + 2 < source.size())
     {
         char c = source[idx];
@@ -277,25 +309,36 @@ string Lexer::handleTripleQuotedString(const string &source, size_t &idx, int &l
             source[idx + 2] == c)
         {
             char quoteChar = c;
+            size_t start = idx;
             idx += 3; // skip opening triple quotes
             while (idx + 2 < source.size())
             {
-                mystring += source[idx];
-                if (source[idx] == '\n')
+                if (source[idx] == '\\')
+                {
+                    idx++; // Skip the escape character (actual handling depends on your needs)
+                }
+                else if (source[idx] == '\n')
                 {
                     lineNumber++;
+                    idx++;
+                }
+                else if (source[idx] == '\r' && idx + 1 < source.size() && source[idx + 1] == '\n')
+                {
+                    lineNumber++;
+                    idx++; // Skip \r\n
                 }
                 if (source[idx] == quoteChar &&
                     source[idx + 1] == quoteChar &&
                     source[idx + 2] == quoteChar)
                 {
-                    idx += 3; // skip closing triple quotes
-                    mystring += "\"\"";
-                    break;
+                    idx += 3;                                 // skip closing triple quotes
+                    return source.substr(start, idx - start); // Include closing quotes
                 }
                 idx++;
             }
-            return mystring;
+            // If we get here, the string was never closed
+            idx = source.size();
+            throw UnterminatedStringError(start_line, start);
         }
     }
     return "";
@@ -303,40 +346,39 @@ string Lexer::handleTripleQuotedString(const string &source, size_t &idx, int &l
 
 bool Lexer::isOperatorStart(char c)
 {
-    regex operatorRegex("[+\\-*/%=!<>]");
+    regex operatorRegex("[~+\\-*/%=!<>&|^]");
     return regex_match(string(1, c), operatorRegex);
 }
-string Lexer::readStringLiteral(const string &source, size_t &idx, int /*lineNumber*/)
+string Lexer::handleDoubleQuotedString(const string &source, size_t &idx, int &lineNumber)
 {
-    if (idx >= source.size())
-        return "";
-
-    char quote = source[idx];
-    size_t start = idx;
-
-    // Construct regex pattern without raw string issues
-    string pattern;
-    pattern += quote;         // Opening quote
-    pattern += "(?:\\\\.|[^"; // Escaped sequences or non-special chars
-    pattern += quote;         // Add quote to excluded chars
-    pattern += "\\\\])*+";    // Close group and add quantifier
-    pattern += quote;         // Closing quote
-
-    regex re(pattern);
-    smatch match;
-    string remaining = source.substr(start);
-
-    if (regex_search(remaining, match, re) && match.position() == 0)
+    int start_line = lineNumber;
+    if (idx < source.size())
     {
-        idx = start + match.length();
-        return match.str();
+        char quoteChar = source[idx];
+        size_t start = idx;
+        idx++; // skip opening quote
+        while (idx < source.size())
+        {
+            if (source[idx] == '\\')
+            {
+                idx++; // Skip the escape character (actual handling depends on your needs)
+            }
+            else if (source[idx] == '\n')
+            {
+                idx++;
+                throw UnterminatedStringError(start_line, start);
+            }
+            else if (source[idx] == quoteChar)
+            {
+                idx++;
+                return source.substr(start, idx - start); // Include closing quotes
+            }
+            idx++;
+        }
+        // If we get here, the string was never closed
+        throw UnterminatedStringError(start_line, start);
     }
-    else
-    {
-        // Handle unterminated string
-        idx = source.size();
-        return source.substr(start);
-    }
+    throw UnterminatedStringError(start_line, idx);
 }
 
 // ----------------------------------------------
@@ -382,6 +424,75 @@ void Parser::parse()
             }
             else
             {
+                // handle multiple assignment like x,y = 2,3 -> assigns x = 2 and y = 3
+                size_t temp = i;
+                vector<Token> lhsIdentifiers;
+                while (temp < tokens.size())
+                {
+                    if (tokens[temp].type == TokenType::IDENTIFIER)
+                    {
+                        lhsIdentifiers.push_back(tokens[temp]);
+                        temp++;
+                        if (temp < tokens.size() && tokens[temp].type == TokenType::Comma)
+                        {
+                            temp++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (temp < tokens.size() && tokens[temp].type == TokenType::OPERATOR && tokens[temp].lexeme == "=")
+                {
+                    temp++;
+                    vector<pair<string, string>> rhsValues;
+                    while (temp < tokens.size())
+                    {
+                        auto [type, value] = parseExpression(temp);
+                        rhsValues.push_back({type, value});
+                        if (temp < tokens.size() && tokens[temp].type == TokenType::Comma)
+                        {
+                            temp++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    for (size_t j = 0; j < lhsIdentifiers.size(); ++j)
+                    {
+                        const Token &var = lhsIdentifiers[j];
+                        string key = var.lexeme + "@" + var.scope;
+                        if (!symbolTable.exist(var.lexeme, var.scope))
+                        {
+                            symbolTable.addSymbol(var.lexeme, "unknown", var.lineNumber, var.scope);
+                        }
+                        else
+                        {
+                            symbolTable.table[key].usageCount++;
+                        }
+                        if (j < rhsValues.size())
+                        {
+                            if (rhsValues[j].first != "unknown")
+                            {
+                                symbolTable.updateType(var.lexeme, var.scope, rhsValues[j].first);
+                            }
+                            if (!rhsValues[j].second.empty())
+                            {
+                                symbolTable.updateValue(var.lexeme, var.scope, rhsValues[j].second);
+                            }
+                        }
+                    }
+                    i = temp;
+                    continue;
+                }
                 // Check if next token is '=' (assignment)
                 if ((i + 1) < tokens.size() &&
                     tokens[i + 1].type == TokenType::OPERATOR &&
@@ -422,6 +533,11 @@ void Parser::parse()
                     if (symbolTable.exist(tk.lexeme, tk.scope))
                     {
                         symbolTable.table[tk.lexeme + "@" + tk.scope].usageCount++;
+                    }
+
+                    else
+                    {
+                        symbolTable.addSymbol(tk.lexeme, "unknown", tk.lineNumber, tk.scope);
                     }
                     i++;
                 }
@@ -531,7 +647,7 @@ pair<string, string> Parser::parseOperand(size_t &i)
         }
         else
         {
-            symbolTable.table[name].usageCount++;
+            symbolTable.table[fullName].usageCount++;
         }
         i++;
         return {knownType, knownType == "unknown" ? "" : knownValue};

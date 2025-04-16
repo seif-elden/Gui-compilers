@@ -8,9 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/Python-Compiler/src/gui.cpp" "CMakeFiles/compiler_gui.dir/src/gui.cpp.obj" "gcc" "CMakeFiles/compiler_gui.dir/src/gui.cpp.obj.d"
-  "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/Python-Compiler/src/main.cpp" "CMakeFiles/compiler_gui.dir/src/main.cpp.obj" "gcc" "CMakeFiles/compiler_gui.dir/src/main.cpp.obj.d"
-  "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/Python-Compiler/src/utils.cpp" "CMakeFiles/compiler_gui.dir/src/utils.cpp.obj" "gcc" "CMakeFiles/compiler_gui.dir/src/utils.cpp.obj.d"
+  "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/with gui Python-Compiler/src/gui.cpp" "CMakeFiles/compiler_gui.dir/src/gui.cpp.obj" "gcc" "CMakeFiles/compiler_gui.dir/src/gui.cpp.obj.d"
+  "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/with gui Python-Compiler/src/main.cpp" "CMakeFiles/compiler_gui.dir/src/main.cpp.obj" "gcc" "CMakeFiles/compiler_gui.dir/src/main.cpp.obj.d"
+  "E:/asu-seif/6)spring-2025-junior/CSE439 - Design of Compilers/project/with gui Python-Compiler/src/utils.cpp" "CMakeFiles/compiler_gui.dir/src/utils.cpp.obj" "gcc" "CMakeFiles/compiler_gui.dir/src/utils.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

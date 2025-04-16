@@ -1,6 +1,6 @@
 CMakeFiles/compiler_gui.dir/src/main.cpp.obj: \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\src\main.cpp \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\src\main.h \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\src\main.cpp \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\src\main.h \
  C:/msys64/ucrt64/include/c++/14.2.0/string \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/requires_hosted.h \
  C:/msys64/ucrt64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -203,7 +203,7 @@ CMakeFiles/compiler_gui.dir/src/main.cpp.obj: \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/regex.tcc \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/regex_executor.h \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/regex_executor.tcc \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\src\gui.h \
- E:/asu-seif/6)spring-2025-junior/CSE439\ -\ Design\ of\ Compilers/project/Python-Compiler/libs/glfw/include/GLFW/glfw3.h \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\src\gui.h \
+ E:/asu-seif/6)spring-2025-junior/CSE439\ -\ Design\ of\ Compilers/project/with\ gui\ Python-Compiler/libs/glfw/include/GLFW/glfw3.h \
  C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
  C:/msys64/ucrt64/include/stdint.h C:/msys64/ucrt64/include/GL/gl.h

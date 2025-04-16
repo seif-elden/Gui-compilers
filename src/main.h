@@ -9,6 +9,33 @@
 #include <fstream>
 #include <cctype>
 #include <regex>
+using namespace std;
+
+// ----------------------------------------------
+// 0. Error Structure
+// ----------------------------------------------
+struct Error
+{
+    string message;
+    int line;
+    size_t position;
+    void print() const
+    {
+        cerr << "Error at line " << line << ", position " << position
+             << ": " << message << endl;
+    }
+};
+
+// Exception for string handling
+class UnterminatedStringError : public exception
+{
+public:
+    int line_number;
+    size_t index;
+    // Constructor that takes line number and index
+    UnterminatedStringError(int line, int idx)
+        : line_number(line), index(idx) {}
+};
 
 // ----------------------------------------------
 // 1. Token Types
@@ -74,11 +101,11 @@ enum class TokenType
 struct Token
 {
     TokenType type;
-    std::string lexeme;
+    string lexeme;
     int lineNumber;
-    std::string scope;
+    string scope;
 
-    Token(TokenType t, const std::string &l, int line, const std::string &s = "");
+    Token(TokenType t, const string &l, int line, const string &s = "");
 };
 
 // ----------------------------------------------
@@ -89,24 +116,24 @@ class SymbolTable
 public:
     struct SymbolInfo
     {
-        std::string type = "unknown";
-        std::string scope = "unknown";
+        string type = "unknown";
+        string scope = "unknown";
         int firstAppearance = -1;
         int usageCount = 0;
-        std::string value;
+        string value;
     };
 
-    std::unordered_map<std::string, SymbolInfo> table;
+    unordered_map<string, SymbolInfo> table;
 
-    void addSymbol(const std::string &name, const std::string &type,
-                   int lineNumber, const std::string &scope,
-                   const std::string &val = "");
-    void updateType(const std::string &name, const std::string &scope, const std::string &newType);
-    void updateValue(const std::string &name, const std::string &scope, const std::string &newValue);
-    bool exist(const std::string &name, const std::string &scope);
-    std::string getType(const std::string &name, const std::string &scope);
-    std::string getValue(const std::string &name, const std::string &scope);
-    void printSymbols(std::ostream &out);
+    void addSymbol(const string &name, const string &type,
+                   int lineNumber, const string &scope,
+                   const string &val = "");
+    void updateType(const string &name, const string &scope, const string &newType);
+    void updateValue(const string &name, const string &scope, const string &newValue);
+    bool exist(const string &name, const string &scope);
+    string getType(const string &name, const string &scope);
+    string getValue(const string &name, const string &scope);
+    void printSymbols(ostream &out);
 };
 
 // ----------------------------------------------
@@ -115,7 +142,7 @@ public:
 class Lexer
 {
 public:
-    std::unordered_map<std::string, TokenType> pythonKeywords = {
+    unordered_map<string, TokenType> pythonKeywords = {
         {"False", TokenType::FalseKeyword},
         {"None", TokenType::NoneKeyword},
         {"True", TokenType::TrueKeyword},
@@ -152,11 +179,11 @@ public:
         {"with", TokenType::WithKeyword},
         {"yield", TokenType::YieldKeyword}};
 
-    std::unordered_set<std::string> operators = {
+    unordered_set<string> operators = {
         "+", "-", "*", "/", "%", "//", "**", "=", "==", "!=", "<", "<=", ">",
         ">=", "+=", "-=", "*=", "/=", "%=", "//=", "**=", "|", "&", "^", "~", "<<", ">>"};
 
-    std::unordered_map<char, TokenType> punctuationSymbols = {
+    unordered_map<char, TokenType> punctuationSymbols = {
         {'(', TokenType::LeftParenthesis},
         {')', TokenType::RightParenthesis},
         {':', TokenType::Colon},
@@ -167,15 +194,15 @@ public:
         {'{', TokenType::LeftBrace},
         {'}', TokenType::RightBrace},
         {';', TokenType::Semicolon}};
-    std::string currentScope = "global";
+    string currentScope = "global";
 
-    std::vector<Token> tokenize(const std::string &source);
+    vector<Token> tokenize(const string &source, vector<Error> &errors);
 
 private:
-    void skipWhitespace(const std::string &source, size_t &idx);
-    std::string handleTripleQuotedString(const std::string &source, size_t &idx, int &lineNumber);
+    void skipWhitespace(const string &source, size_t &idx);
+    string handleTripleQuotedString(const string &source, size_t &idx, int &lineNumber);
     bool isOperatorStart(char c);
-    std::string readStringLiteral(const std::string &source, size_t &idx, int lineNumber);
+    string handleDoubleQuotedString(const string &source, size_t &idx, int &lineNumber);
 };
 
 // ----------------------------------------------
@@ -184,15 +211,15 @@ private:
 class Parser
 {
 public:
-    Parser(const std::vector<Token> &tokens, SymbolTable &symTable);
+    Parser(const vector<Token> &tokens, SymbolTable &symTable);
     void parse();
 
 private:
-    const std::vector<Token> &tokens;
+    const vector<Token> &tokens;
     SymbolTable &symbolTable;
-    std::string lastKeyword;
+    string lastKeyword;
 
-    std::pair<std::string, std::string> parseExpression(size_t &i);
-    std::pair<std::string, std::string> parseOperand(size_t &i);
-    std::string unifyTypes(const std::string &t1, const std::string &t2);
+    pair<string, string> parseExpression(size_t &i);
+    pair<string, string> parseOperand(size_t &i);
+    string unifyTypes(const string &t1, const string &t2);
 };

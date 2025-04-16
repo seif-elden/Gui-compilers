@@ -56,10 +56,10 @@ RM = C:\msys64\ucrt64\bin\cmake.exe -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler"
+CMAKE_SOURCE_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build"
+CMAKE_BINARY_DIR = "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -131,14 +131,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build\CMakeFiles" "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build\libs\imgui\\CMakeFiles\progress.marks"
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build\CMakeFiles" 0
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build\CMakeFiles" "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build\libs\imgui\\CMakeFiles\progress.marks"
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/all
+	$(CMAKE_COMMAND) -E cmake_progress_start "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/clean
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/clean
 .PHONY : clean
 
 # The main clean target
@@ -147,22 +147,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/preinstall
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/preinstall
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 1
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 libs/imgui/CMakeFiles/imgui.dir/rule:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/CMakeFiles/imgui.dir/rule
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 libs/imgui/CMakeFiles/imgui.dir/rule
 .PHONY : libs/imgui/CMakeFiles/imgui.dir/rule
 
 # Convenience name for target.
@@ -171,7 +171,7 @@ imgui: libs/imgui/CMakeFiles/imgui.dir/rule
 
 # fast build rule for target.
 imgui/fast:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/build
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/build
 .PHONY : imgui/fast
 
 __/ImGuiFileDialog/ImGuiFileDialog.obj: __/ImGuiFileDialog/ImGuiFileDialog.cpp.obj
@@ -179,7 +179,7 @@ __/ImGuiFileDialog/ImGuiFileDialog.obj: __/ImGuiFileDialog/ImGuiFileDialog.cpp.o
 
 # target to build an object file
 __/ImGuiFileDialog/ImGuiFileDialog.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/__/ImGuiFileDialog/ImGuiFileDialog.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/__/ImGuiFileDialog/ImGuiFileDialog.cpp.obj
 .PHONY : __/ImGuiFileDialog/ImGuiFileDialog.cpp.obj
 
 __/ImGuiFileDialog/ImGuiFileDialog.i: __/ImGuiFileDialog/ImGuiFileDialog.cpp.i
@@ -187,7 +187,7 @@ __/ImGuiFileDialog/ImGuiFileDialog.i: __/ImGuiFileDialog/ImGuiFileDialog.cpp.i
 
 # target to preprocess a source file
 __/ImGuiFileDialog/ImGuiFileDialog.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/__/ImGuiFileDialog/ImGuiFileDialog.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/__/ImGuiFileDialog/ImGuiFileDialog.cpp.i
 .PHONY : __/ImGuiFileDialog/ImGuiFileDialog.cpp.i
 
 __/ImGuiFileDialog/ImGuiFileDialog.s: __/ImGuiFileDialog/ImGuiFileDialog.cpp.s
@@ -195,7 +195,7 @@ __/ImGuiFileDialog/ImGuiFileDialog.s: __/ImGuiFileDialog/ImGuiFileDialog.cpp.s
 
 # target to generate assembly for a file
 __/ImGuiFileDialog/ImGuiFileDialog.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/__/ImGuiFileDialog/ImGuiFileDialog.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/__/ImGuiFileDialog/ImGuiFileDialog.cpp.s
 .PHONY : __/ImGuiFileDialog/ImGuiFileDialog.cpp.s
 
 backends/imgui_impl_glfw.obj: backends/imgui_impl_glfw.cpp.obj
@@ -203,7 +203,7 @@ backends/imgui_impl_glfw.obj: backends/imgui_impl_glfw.cpp.obj
 
 # target to build an object file
 backends/imgui_impl_glfw.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_glfw.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_glfw.cpp.obj
 .PHONY : backends/imgui_impl_glfw.cpp.obj
 
 backends/imgui_impl_glfw.i: backends/imgui_impl_glfw.cpp.i
@@ -211,7 +211,7 @@ backends/imgui_impl_glfw.i: backends/imgui_impl_glfw.cpp.i
 
 # target to preprocess a source file
 backends/imgui_impl_glfw.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_glfw.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_glfw.cpp.i
 .PHONY : backends/imgui_impl_glfw.cpp.i
 
 backends/imgui_impl_glfw.s: backends/imgui_impl_glfw.cpp.s
@@ -219,7 +219,7 @@ backends/imgui_impl_glfw.s: backends/imgui_impl_glfw.cpp.s
 
 # target to generate assembly for a file
 backends/imgui_impl_glfw.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_glfw.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_glfw.cpp.s
 .PHONY : backends/imgui_impl_glfw.cpp.s
 
 backends/imgui_impl_opengl3.obj: backends/imgui_impl_opengl3.cpp.obj
@@ -227,7 +227,7 @@ backends/imgui_impl_opengl3.obj: backends/imgui_impl_opengl3.cpp.obj
 
 # target to build an object file
 backends/imgui_impl_opengl3.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_opengl3.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_opengl3.cpp.obj
 .PHONY : backends/imgui_impl_opengl3.cpp.obj
 
 backends/imgui_impl_opengl3.i: backends/imgui_impl_opengl3.cpp.i
@@ -235,7 +235,7 @@ backends/imgui_impl_opengl3.i: backends/imgui_impl_opengl3.cpp.i
 
 # target to preprocess a source file
 backends/imgui_impl_opengl3.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_opengl3.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_opengl3.cpp.i
 .PHONY : backends/imgui_impl_opengl3.cpp.i
 
 backends/imgui_impl_opengl3.s: backends/imgui_impl_opengl3.cpp.s
@@ -243,7 +243,7 @@ backends/imgui_impl_opengl3.s: backends/imgui_impl_opengl3.cpp.s
 
 # target to generate assembly for a file
 backends/imgui_impl_opengl3.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_opengl3.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/backends/imgui_impl_opengl3.cpp.s
 .PHONY : backends/imgui_impl_opengl3.cpp.s
 
 imgui.obj: imgui.cpp.obj
@@ -251,7 +251,7 @@ imgui.obj: imgui.cpp.obj
 
 # target to build an object file
 imgui.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui.cpp.obj
 .PHONY : imgui.cpp.obj
 
 imgui.i: imgui.cpp.i
@@ -259,7 +259,7 @@ imgui.i: imgui.cpp.i
 
 # target to preprocess a source file
 imgui.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui.cpp.i
 .PHONY : imgui.cpp.i
 
 imgui.s: imgui.cpp.s
@@ -267,7 +267,7 @@ imgui.s: imgui.cpp.s
 
 # target to generate assembly for a file
 imgui.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui.cpp.s
 .PHONY : imgui.cpp.s
 
 imgui_demo.obj: imgui_demo.cpp.obj
@@ -275,7 +275,7 @@ imgui_demo.obj: imgui_demo.cpp.obj
 
 # target to build an object file
 imgui_demo.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_demo.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_demo.cpp.obj
 .PHONY : imgui_demo.cpp.obj
 
 imgui_demo.i: imgui_demo.cpp.i
@@ -283,7 +283,7 @@ imgui_demo.i: imgui_demo.cpp.i
 
 # target to preprocess a source file
 imgui_demo.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_demo.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_demo.cpp.i
 .PHONY : imgui_demo.cpp.i
 
 imgui_demo.s: imgui_demo.cpp.s
@@ -291,7 +291,7 @@ imgui_demo.s: imgui_demo.cpp.s
 
 # target to generate assembly for a file
 imgui_demo.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_demo.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_demo.cpp.s
 .PHONY : imgui_demo.cpp.s
 
 imgui_draw.obj: imgui_draw.cpp.obj
@@ -299,7 +299,7 @@ imgui_draw.obj: imgui_draw.cpp.obj
 
 # target to build an object file
 imgui_draw.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_draw.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_draw.cpp.obj
 .PHONY : imgui_draw.cpp.obj
 
 imgui_draw.i: imgui_draw.cpp.i
@@ -307,7 +307,7 @@ imgui_draw.i: imgui_draw.cpp.i
 
 # target to preprocess a source file
 imgui_draw.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_draw.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_draw.cpp.i
 .PHONY : imgui_draw.cpp.i
 
 imgui_draw.s: imgui_draw.cpp.s
@@ -315,7 +315,7 @@ imgui_draw.s: imgui_draw.cpp.s
 
 # target to generate assembly for a file
 imgui_draw.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_draw.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_draw.cpp.s
 .PHONY : imgui_draw.cpp.s
 
 imgui_tables.obj: imgui_tables.cpp.obj
@@ -323,7 +323,7 @@ imgui_tables.obj: imgui_tables.cpp.obj
 
 # target to build an object file
 imgui_tables.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.obj
 .PHONY : imgui_tables.cpp.obj
 
 imgui_tables.i: imgui_tables.cpp.i
@@ -331,7 +331,7 @@ imgui_tables.i: imgui_tables.cpp.i
 
 # target to preprocess a source file
 imgui_tables.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.i
 .PHONY : imgui_tables.cpp.i
 
 imgui_tables.s: imgui_tables.cpp.s
@@ -339,7 +339,7 @@ imgui_tables.s: imgui_tables.cpp.s
 
 # target to generate assembly for a file
 imgui_tables.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.s
 .PHONY : imgui_tables.cpp.s
 
 imgui_widgets.obj: imgui_widgets.cpp.obj
@@ -347,7 +347,7 @@ imgui_widgets.obj: imgui_widgets.cpp.obj
 
 # target to build an object file
 imgui_widgets.cpp.obj:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_widgets.cpp.obj
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_widgets.cpp.obj
 .PHONY : imgui_widgets.cpp.obj
 
 imgui_widgets.i: imgui_widgets.cpp.i
@@ -355,7 +355,7 @@ imgui_widgets.i: imgui_widgets.cpp.i
 
 # target to preprocess a source file
 imgui_widgets.cpp.i:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_widgets.cpp.i
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_widgets.cpp.i
 .PHONY : imgui_widgets.cpp.i
 
 imgui_widgets.s: imgui_widgets.cpp.s
@@ -363,7 +363,7 @@ imgui_widgets.s: imgui_widgets.cpp.s
 
 # target to generate assembly for a file
 imgui_widgets.cpp.s:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_widgets.cpp.s
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(MAKE) $(MAKESILENT) -f libs\imgui\CMakeFiles\imgui.dir\build.make libs/imgui/CMakeFiles/imgui.dir/imgui_widgets.cpp.s
 .PHONY : imgui_widgets.cpp.s
 
 # Help Target
@@ -414,6 +414,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 0
+	cd /d "E:\asu-seif\6)spring-2025-junior\CSE439 - Design of Compilers\project\with gui Python-Compiler\build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles\Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

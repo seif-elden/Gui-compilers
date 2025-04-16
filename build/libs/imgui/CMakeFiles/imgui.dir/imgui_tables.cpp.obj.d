@@ -1,7 +1,7 @@
 libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.obj: \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\libs\imgui\imgui_tables.cpp \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\libs\imgui\imgui.h \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\libs\imgui\imconfig.h \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\libs\imgui\imgui_tables.cpp \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\libs\imgui\imgui.h \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\libs\imgui\imconfig.h \
  C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/float.h \
  C:/msys64/ucrt64/include/float.h C:/msys64/ucrt64/include/crtdefs.h \
  C:/msys64/ucrt64/include/corecrt.h C:/msys64/ucrt64/include/_mingw.h \
@@ -32,7 +32,7 @@ libs/imgui/CMakeFiles/imgui.dir/imgui_tables.cpp.obj: \
  C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
  C:/msys64/ucrt64/include/errno.h \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/std_abs.h \
- E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\Python-Compiler\libs\imgui\imgui_internal.h \
+ E:\asu-seif\6)spring-2025-junior\CSE439\ -\ Design\ of\ Compilers\project\with\ gui\ Python-Compiler\libs\imgui\imgui_internal.h \
  C:/msys64/ucrt64/include/stdio.h \
  C:/msys64/ucrt64/include/corecrt_stdio_config.h \
  C:/msys64/ucrt64/include/_mingw_off_t.h \

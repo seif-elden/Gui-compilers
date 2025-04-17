@@ -116,14 +116,18 @@ class SymbolTable
 public:
     struct SymbolInfo
     {
-        string type = "unknown";
-        string scope = "unknown";
-        int firstAppearance = -1;
-        int usageCount = 0;
+        int entry;                // unique entry number
+        string type = "unknown";  // e.g., "function", "class", "int", etc.
+        string scope = "unknown"; // e.g., "global" or function name
+        int firstAppearance = -1; // line of first appearance
+        int usageCount = 0;       // how many times it is referenced
+
+        // A new field to store a literal value if we know it (optional).
         string value;
     };
 
     unordered_map<string, SymbolInfo> table;
+    int nextEntry = 1;
 
     void addSymbol(const string &name, const string &type,
                    int lineNumber, const string &scope,

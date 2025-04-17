@@ -17,10 +17,12 @@ void SymbolTable::addSymbol(const string &name, const string &type,
                             const string &val)
 {
     string uniqueKey = name + "@" + scope;
+
     auto it = table.find(uniqueKey);
     if (it == table.end())
     {
         SymbolInfo info;
+        info.entry = nextEntry++;
         info.type = type;
         info.scope = scope;
         info.firstAppearance = lineNumber;
@@ -76,13 +78,22 @@ string SymbolTable::getValue(const string &name, const string &scope)
 
 void SymbolTable::printSymbols(ostream &out)
 {
+    // Create a vector of pairs to sort by entry
+    vector<pair<string, SymbolInfo>> sortedSymbols(table.begin(), table.end());
+    sort(sortedSymbols.begin(), sortedSymbols.end(),
+         [](const pair<string, SymbolInfo> &a, const pair<string, SymbolInfo> &b)
+         {
+             return a.second.entry < b.second.entry;
+         });
+
     out << "Symbol Table:\n";
-    for (auto &[key, info] : table)
+    for (auto &[key, info] : sortedSymbols)
     {
         auto at = key.find('@');
         string name = key.substr(0, at);
         string scope = key.substr(at + 1);
-        out << "Name: " << name
+        out << "Entry: " << info.entry
+            << ", Name: " << name
             << ", Scope: " << scope
             << ", Type: " << info.type
             << ", First Appearance: Line " << info.firstAppearance
@@ -752,7 +763,12 @@ string Parser::unifyTypes(const string &t1, const string &t2)
     }
 
     // If either is string => let's say "unknown" for arithmetic
-    if (t1 == "string" || t2 == "string")
+    if (t1 == "string" && t2 == "string")
+    {
+        return "unknown";
+    }
+
+    if (t2 == "string" && t1 != "string")
     {
         return "unknown";
     }

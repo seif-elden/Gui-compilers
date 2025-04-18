@@ -112,20 +112,43 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
     vector<Token> tokens;
     int lineNumber = 1;
     size_t i = 0;
+    indentStack = {0}; // Reset state
+    atLineStart = true;
+    lineContinuation = false;
 
     while (i < source.size())
     {
-        skipWhitespace(source, i);
+        // Handle indentation at the start of a line (if not a continuation)
+        if (atLineStart && !lineContinuation)
+        {
+            processIndentation(source, i, lineNumber, tokens, errors);
+            atLineStart = false;
+        }
+
+        skipNonLeadingWhitespace(source, i);
+
         if (i >= source.size())
             break;
 
         char c = source[i];
 
-        // Handle newlines
+        // Handle newlines and reset flags
         if (c == '\n')
         {
             lineNumber++;
             i++;
+            atLineStart = true;
+            lineContinuation = false; // Reset continuation
+            continue;
+        }
+
+        // Check for line continuation (backslash before newline)
+        if (c == '\\' && i + 1 < source.size() && source[i + 1] == '\n')
+        {
+            lineContinuation = true;
+            i += 2; // Skip both '\' and '\n'
+            lineNumber++;
+            atLineStart = true;
             continue;
         }
 
@@ -175,7 +198,7 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
                 if (word == "def" || word == "class")
                 {
                     tokens.push_back(Token(pythonKeywords[word], word, lineNumber));
-                    skipWhitespace(source, i);
+                    skipNonLeadingWhitespace(source, i);
                     size_t identifierStart = i;
                     while (i < source.size() && (isalnum(static_cast<unsigned char>(source[i])) || source[i] == '_'))
                     {
@@ -184,9 +207,9 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
                     if (identifierStart < i)
                     {
                         string identifier = source.substr(identifierStart, i - identifierStart);
-                        currentScope = identifier;
-                        // cout<<"Current scope: " << currentScope << endl;
-                        tokens.push_back(Token(TokenType::IDENTIFIER, identifier, lineNumber, currentScope));
+                        scopeStack.push_back({identifier, indentStack.back()});
+                        // cout<<"Current scope: " << scopeStack << endl;
+                        tokens.push_back(Token(TokenType::IDENTIFIER, identifier, lineNumber, getScope(scopeStack)));
                     }
                 }
                 else
@@ -196,16 +219,14 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
             }
             else
             {
-                tokens.push_back(Token(TokenType::IDENTIFIER, word, lineNumber, currentScope));
-                // cout<< "scope of " << word << " is " << currentScope << endl;
+                tokens.push_back(Token(TokenType::IDENTIFIER, word, lineNumber, getScope(scopeStack)));
+                // cout<< "scope of " << word << " is " << scopeStack << endl;
             }
             continue;
         }
 
-        // Handle operators (simple version)
         if (isOperatorStart(c))
         {
-            // check 3-char operators first
             if ((i + 2) < source.size())
             {
                 string threeChars = source.substr(i, 3);
@@ -216,7 +237,6 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
                     continue;
                 }
             }
-            // Check 2-char operators
             if ((i + 1) < source.size())
             {
                 string twoChars = source.substr(i, 2);
@@ -227,7 +247,6 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
                     continue;
                 }
             }
-            // Otherwise single-char operator
             string oneChar(1, c);
             if (operators.find(oneChar) != operators.end())
             {
@@ -289,12 +308,20 @@ vector<Token> Lexer::tokenize(const string &source, vector<Error> &errors)
         // Unknown character - add error but keep going
         errors.push_back({"Invalid character '" + string(1, c) + "'", lineNumber, i});
         i++;
+        atLineStart = false;
+    }
+
+    // Add DEDENT tokens for remaining indentation levels at EOF
+    while (indentStack.size() > 1)
+    {
+        indentStack.pop_back();
+        tokens.push_back(Token(TokenType::DEDENT, "", lineNumber));
     }
 
     return tokens;
 }
 
-void Lexer::skipWhitespace(const string &source, size_t &idx)
+void Lexer::skipNonLeadingWhitespace(const string &source, size_t &idx)
 {
     static const regex ws_regex(R"(^[ \t\r]+)");
     smatch match;
@@ -303,9 +330,9 @@ void Lexer::skipWhitespace(const string &source, size_t &idx)
         return;
 
     string remaining = source.substr(idx);
-    if (regex_search(remaining, match, ws_regex))
+    if (regex_search(remaining, match, ws_regex, regex_constants::match_continuous))
     {
-        idx += match.length();
+        idx += match.length(); // Advance past matched whitespace
     }
 }
 
@@ -392,6 +419,85 @@ string Lexer::handleDoubleQuotedString(const string &source, size_t &idx, int &l
     throw UnterminatedStringError(start_line, idx);
 }
 
+void Lexer::processIndentation(const string &source, size_t &i, int lineNumber,
+                               vector<Token> &tokens, vector<Error> &errors)
+{
+    size_t start = i;
+    int spaces = 0, tabs = 0;
+    // Count leading spaces/tabs
+    while (i < source.size() && (source[i] == ' ' || source[i] == '\t'))
+    {
+        if (source[i] == ' ')
+            spaces++;
+        else
+            tabs++;
+        i++;
+    }
+    // Error: Mixed tabs and spaces
+    if (spaces > 0 && tabs > 0)
+    {
+        errors.push_back({"Mixed tabs and spaces in indentation", lineNumber, start});
+    }
+    if (source[i] == '\n')
+    {
+        return;
+    }
+    // Calculate indentation level (1 tab = 4 spaces, adjust as needed)
+    int newIndent = tabs * 4 + spaces;
+    // Compare with current indentation
+    if (newIndent > indentStack.back())
+    {
+        indentStack.push_back(newIndent);
+        tokens.push_back(Token(TokenType::INDENT, "", lineNumber));
+    }
+    else if (newIndent < indentStack.back())
+    {
+        // Pop until matching indentation level
+        while (indentStack.back() > newIndent)
+        {
+            indentStack.pop_back();
+            tokens.push_back(Token(TokenType::DEDENT, "", lineNumber));
+            // Pop scope ONLY if dedenting past its original indentation level
+            while (!scopeStack.empty() && indentStack.back() <= scopeStack.back().indentLevel)
+            {
+                scopeStack.pop_back();
+            }
+            if (indentStack.empty())
+            {
+                errors.push_back({"Dedent exceeds indentation level", lineNumber, start});
+                indentStack.push_back(0); // Recover
+                break;
+            }
+        }
+        // Error: No matching indentation level
+        if (indentStack.back() != newIndent)
+        {
+            errors.push_back({"Unindent does not match outer level", lineNumber, start});
+        }
+    }
+    // Equal indentation: Do nothing
+}
+string Lexer::getScope(const vector<ScopeInfo> &scopeStack)
+{
+    if (scopeStack.empty())
+    {
+        return "global";
+    }
+    else
+    {
+        string hierarchy = scopeStack.back().name;
+        for (auto it = scopeStack.rbegin() + 1; it != scopeStack.rend(); ++it)
+        {
+            if (!scopeStack.empty())
+            {
+                hierarchy += "@";
+            }
+            hierarchy += it->name;
+        }
+        return hierarchy;
+    }
+}
+
 // ----------------------------------------------
 // Parser Implementation
 // ----------------------------------------------
@@ -407,15 +513,7 @@ void Parser::parse()
 
         if (tk.type == TokenType::DefKeyword || tk.type == TokenType::ClassKeyword)
         {
-            // If we see 'def' or 'class', record that for the next identifier
-            if (tk.lexeme == "def" || tk.lexeme == "class")
-            {
-                lastKeyword = tk.lexeme;
-            }
-            else
-            {
-                lastKeyword.clear();
-            }
+            lastKeyword = tk.lexeme;
             i++;
         }
         else if (tk.type == TokenType::IDENTIFIER)
@@ -523,8 +621,6 @@ void Parser::parse()
                         // If it exists, usage count will increment
                         symbolTable.table[lhsName + "@" + tk.scope].usageCount++;
                     }
-
-                    // Now let's parse the assignment
                     i += 2; // skip past "identifier" and "="
                     auto [rhsType, rhsValue] = parseExpression(i);
 
@@ -669,18 +765,47 @@ pair<string, string> Parser::parseOperand(size_t &i)
     {
         string value = "(";
         i++;
+        vector<string> elementTypes;
+        vector<string> elementValues;
+
         while (i < tokens.size() && tokens[i].lexeme != ")")
         {
-            // auto [type, value] = parseOperand(i); // if we want to know the type of the values stored too
-            value = value + tokens[i].lexeme;
-            i++;
+            auto [innerType, innerValue] = parseExpression(i);
+            elementTypes.push_back(innerType);
+            elementValues.push_back(innerValue);
+
+            if (i < tokens.size() && tokens[i].lexeme == ",")
+            {
+                value += innerValue + ",";
+                i++; // Skip the comma
+            }
+            else
+            {
+                value += innerValue;
+                break;
+            }
         }
+
         if (i < tokens.size() && tokens[i].lexeme == ")")
         {
             i++;
+            value += ")";
+            if (elementTypes.size() == 1)
+            {
+                // Single element in parentheses, treat as the element itself
+                return {elementTypes[0], value};
+            }
+            else
+            {
+                // Multiple elements, treat as a tuple
+                return {"tuple", value};
+            }
         }
-        value = value + ")";
-        return {"tuple", value};
+        else
+        {
+            // If no closing parenthesis, return unknown
+            return {"unknown", value};
+        }
     }
 
     // if it's a list

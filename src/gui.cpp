@@ -68,6 +68,194 @@ void CompilerGUI::loadFile()
         config);
 }
 
+void printtokens(auto tokens, auto symbols)
+{
+    cout << "\n\nTokens:\n";
+    for (auto &tk : tokens)
+    {
+        cout << "< ";
+        switch (tk.type)
+        {
+        case TokenType::FalseKeyword:
+            cout << "FalseKeyword";
+            break;
+        case TokenType::NoneKeyword:
+            cout << "NoneKeyword";
+            break;
+        case TokenType::TrueKeyword:
+            cout << "TrueKeyword";
+            break;
+        case TokenType::AndKeyword:
+            cout << "AndKeyword";
+            break;
+        case TokenType::AsKeyword:
+            cout << "AsKeyword";
+            break;
+        case TokenType::AssertKeyword:
+            cout << "AssertKeyword";
+            break;
+        case TokenType::AsyncKeyword:
+            cout << "AsyncKeyword";
+            break;
+        case TokenType::AwaitKeyword:
+            cout << "AwaitKeyword";
+            break;
+        case TokenType::BreakKeyword:
+            cout << "BreakKeyword";
+            break;
+        case TokenType::ClassKeyword:
+            cout << "ClassKeyword";
+            break;
+        case TokenType::ContinueKeyword:
+            cout << "ContinueKeyword";
+            break;
+        case TokenType::DefKeyword:
+            cout << "DefKeyword";
+            break;
+        case TokenType::DelKeyword:
+            cout << "DelKeyword";
+            break;
+        case TokenType::ElifKeyword:
+            cout << "ElifKeyword";
+            break;
+        case TokenType::ElseKeyword:
+            cout << "ElseKeyword";
+            break;
+        case TokenType::ExceptKeyword:
+            cout << "ExceptKeyword";
+            break;
+        case TokenType::FinallyKeyword:
+            cout << "FinallyKeyword";
+            break;
+        case TokenType::ForKeyword:
+            cout << "ForKeyword";
+            break;
+        case TokenType::FromKeyword:
+            cout << "FromKeyword";
+            break;
+        case TokenType::GlobalKeyword:
+            cout << "GlobalKeyword";
+            break;
+        case TokenType::IfKeyword:
+            cout << "IfKeyword";
+            break;
+        case TokenType::ImportKeyword:
+            cout << "ImportKeyword";
+            break;
+        case TokenType::InKeyword:
+            cout << "InKeyword";
+            break;
+        case TokenType::IsKeyword:
+            cout << "IsKeyword";
+            break;
+        case TokenType::LambdaKeyword:
+            cout << "LambdaKeyword";
+            break;
+        case TokenType::NonlocalKeyword:
+            cout << "NonlocalKeyword";
+            break;
+        case TokenType::NotKeyword:
+            cout << "NotKeyword";
+            break;
+        case TokenType::OrKeyword:
+            cout << "OrKeyword";
+            break;
+        case TokenType::PassKeyword:
+            cout << "PassKeyword";
+            break;
+        case TokenType::RaiseKeyword:
+            cout << "RaiseKeyword";
+            break;
+        case TokenType::ReturnKeyword:
+            cout << "ReturnKeyword";
+            break;
+        case TokenType::TryKeyword:
+            cout << "TryKeyword";
+            break;
+        case TokenType::WhileKeyword:
+            cout << "WhileKeyword";
+            break;
+        case TokenType::WithKeyword:
+            cout << "WithKeyword";
+            break;
+        case TokenType::YieldKeyword:
+            cout << "YieldKeyword";
+            break;
+        case TokenType::IDENTIFIER:
+            cout << "IDENTIFIER";
+            break;
+        case TokenType::NUMBER:
+            cout << "NUMBER";
+            break;
+        case TokenType::OPERATOR:
+            cout << "OPERATOR";
+            break;
+        case TokenType::LeftParenthesis:
+            cout << "LeftParenthesis";
+            break;
+        case TokenType::RightParenthesis:
+            cout << "RightParenthesis";
+            break;
+        case TokenType::LeftBracket:
+            cout << "LeftBracket";
+            break;
+        case TokenType::RightBracket:
+            cout << "RightBracket";
+            break;
+        case TokenType::LeftBrace:
+            cout << "LeftBrace";
+            break;
+        case TokenType::RightBrace:
+            cout << "RightBrace";
+            break;
+        case TokenType::Colon:
+            cout << "Colon";
+            break;
+        case TokenType::Comma:
+            cout << "Comma";
+            break;
+        case TokenType::Dot:
+            cout << "Dot";
+            break;
+        case TokenType::Semicolon:
+            cout << "Semicolon";
+            break;
+        case TokenType::STRING_LITERAL:
+            cout << "STRING_LITERAL";
+            break;
+        case TokenType::INDENT:
+            cout << "INDENT";
+            break;
+        case TokenType::DEDENT:
+            cout << "DEDENT";
+            break;
+        case TokenType::UNKNOWN:
+            cout << "UNKNOWN";
+            break;
+        }
+        cout << ", ";
+        if (tk.type == TokenType::IDENTIFIER)
+        {
+            string key = tk.lexeme + "@" + tk.scope;
+            if (symbols.table.find(key) != symbols.table.end())
+            {
+                cout << "symbol table entry : " << symbols.table[key].entry;
+            }
+            else
+            {
+                cout << "symbol table entry: not found";
+            }
+        }
+        else
+        {
+            cout << tk.lexeme;
+        }
+        cout << " > ";
+        cout << " | LINE NUMBER: " << tk.lineNumber << endl;
+    }
+    cout << endl;
+}
+
 void CompilerGUI::compile()
 {
     errors.clear(); // Clear previous errors
@@ -77,7 +265,6 @@ void CompilerGUI::compile()
         SymbolTable symbols;
         std::vector<Error> tokenErrors;
         auto tokens = Lexer().tokenize(codeBuffer, tokenErrors);
-
         // Add tokenization errors to main error list
         errors.insert(errors.end(), tokenErrors.begin(), tokenErrors.end());
 
@@ -91,6 +278,7 @@ void CompilerGUI::compile()
             symbols.printSymbols(ss);
             symbolTableOutput = ss.str();
         }
+        printtokens(tokens, symbols);
     }
     catch (const UnterminatedStringError &e)
     {

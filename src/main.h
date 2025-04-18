@@ -92,7 +92,9 @@ enum class TokenType
     Colon,
     Comma,
     Dot,
-    Semicolon
+    Semicolon,
+    INDENT,
+    DEDENT
 };
 
 // ----------------------------------------------
@@ -107,9 +109,16 @@ struct Token
 
     Token(TokenType t, const string &l, int line, const string &s = "");
 };
+// 3. Scope Info Structure
+// ----------------------------------------------
+struct ScopeInfo
+{
+    std::string name;
+    int indentLevel; // Indentation level when the scope started
+};
 
 // ----------------------------------------------
-// 3. SymbolTable
+// 4. SymbolTable
 // ----------------------------------------------
 class SymbolTable
 {
@@ -141,7 +150,7 @@ public:
 };
 
 // ----------------------------------------------
-// 4. Lexer
+// 5. Lexer
 // ----------------------------------------------
 class Lexer
 {
@@ -198,19 +207,26 @@ public:
         {'{', TokenType::LeftBrace},
         {'}', TokenType::RightBrace},
         {';', TokenType::Semicolon}};
-    string currentScope = "global";
+
+    vector<ScopeInfo> scopeStack;
 
     vector<Token> tokenize(const string &source, vector<Error> &errors);
 
 private:
-    void skipWhitespace(const string &source, size_t &idx);
+    vector<int> indentStack = {0}; // Track indentation levels (e.g., [0, 4, 8])
+    bool atLineStart = true;       // Flag for newline handling
+    bool lineContinuation = false; // Track line continuation via '\'
+    void skipNonLeadingWhitespace(const string &source, size_t &idx);
     string handleTripleQuotedString(const string &source, size_t &idx, int &lineNumber);
     bool isOperatorStart(char c);
     string handleDoubleQuotedString(const string &source, size_t &idx, int &lineNumber);
+    void processIndentation(const string &source, size_t &i, int lineNumber,
+                            vector<Token> &tokens, vector<Error> &errors);
+    string getScope(const vector<ScopeInfo> &scopeStack);
 };
 
 // ----------------------------------------------
-// 5. Parser
+// 6. Parser
 // ----------------------------------------------
 class Parser
 {
